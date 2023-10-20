@@ -10,6 +10,8 @@ import PlanMenu from "../planmenu/planmenu";
 
 import { SchoolsContext } from "../../store/SchoolsContextProvider";
 import areas from '../../static/instructor_areas.json';
+import { getDistanceRequest } from "../../utils/localServerRequests";
+import { uniques } from "../../utils/arrayUtils";
 
 import settingsConstants from '../../utils/settingsconstants.json';
 import pageText from './placementspage2text.json';
@@ -69,11 +71,17 @@ const PlacementsPage2 = () => {
 
     const storeCtx = useContext(SchoolsContext);
     const storeData = storeCtx.data;
+    const storeLookupData = storeCtx.lookupData;
     const storeMethods = storeCtx.methods;
 
     const [selectedPlan, setSelectedPlan] = useState(null);
     const handlePlanChange = plan => {
-        setSelectedPlan(preparePlan(plan));
+        const school = storeLookupData.schools.get(plan.schoolId);
+        if (school) {
+            setSelectedPlan({...preparePlan(plan), city: school.city});
+        } else {
+            setSelectedPlan(preparePlan(plan));
+        }
     };
 
     const [optionsDS, setOptionsDS] = useState([]);
@@ -98,9 +106,33 @@ const PlacementsPage2 = () => {
         dip(params.data.id, selectedPlan.id);
     }, [selectedPlan, storeMethods.deleteInstructorPlacement]);
 
+    // Distances object
+    const [dists, setDists] = useState({});
+    useEffect(() => {
+        (async () => {
+            setDists(selectedPlan && selectedPlan.city ?
+                await getDistanceRequest(
+                    selectedPlan.city,
+                    uniques(storeData.instructors.map(inst => inst.city))
+                )
+            : {});
+        })();
+    }, [selectedPlan, storeData.instructors]);
 
-
+    const distCalculateCellValue = useCallback(
+        data => selectedPlan.city === data.city ? 0 : (dists[data.city] || null),
+        [selectedPlan, dists]
+    );
     const instructorColumns = [
+        <Column
+            key="dist"
+            dataType="number"
+            caption={pageText.dist}
+            calculateCellValue={distCalculateCellValue}
+            allowEditing={false}
+            allowFiltering={false}
+            sortOrder="asc"
+        />,
         <Column
             key="firstName"
             dataField="firstName"
@@ -146,7 +178,7 @@ const PlacementsPage2 = () => {
             dataType="string"
             caption={pageText.notes}
         />,
-        InstructorTypesColumn('instructorTypes')
+        InstructorTypesColumn('instructorTypes'),
     ];
 
 

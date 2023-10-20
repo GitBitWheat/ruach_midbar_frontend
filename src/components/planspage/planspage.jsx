@@ -147,7 +147,7 @@ const PlansPage = () => {
                 });
         });
         event.cancel = isCanceled;
-    }, [storeMethods, linkDSLst, storeLookupData]);
+    }, [storeMethods, linkDSLst, storeLookupData.schools]);
 
     const handleRowRemoving = useCallback(event => {
         const isCanceled = new Promise(resolve => {
@@ -183,7 +183,7 @@ const PlansPage = () => {
                 });
         });
         event.cancel = isCanceled;
-    }, [storeMethods, linkDSLst, storeLookupData]);
+    }, [storeMethods, linkDSLst, storeLookupData.schools]);
 
     // Using values from diffrent data fields for the schoolId column
     const schoolIdCellRender = useCallback(({ value }) => {
