@@ -24,8 +24,8 @@ const instTypesDisplayValue = data => (data.instructorTypes || []).join(', ');
 
 
 
-const InstructorTypesColumn = (key) => {
-    const extraProps = {};
+const InstructorTypesColumn = (key, addedProps) => {
+    const extraProps = {...addedProps};
     if (key) {
         extraProps.key = key;
     }

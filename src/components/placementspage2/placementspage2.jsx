@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext, useCallback } from "react";
-import { DataGrid, HeaderFilter, Column, ColumnChooser, ColumnFixing, StateStoring }
+import { DataGrid, HeaderFilter, Column, ColumnChooser, ColumnFixing, StateStoring, Editing }
     from 'devextreme-react/data-grid';
+import { Form, Button } from "react-bootstrap";
 
 import WhatsappCell from "../customcells/whatsappcell/whatsappcell";
 import LinkCell from "../customcells/linkcell/linkcell";
@@ -10,7 +11,7 @@ import PlanMenu from "../planmenu/planmenu";
 
 import { SchoolsContext } from "../../store/SchoolsContextProvider";
 import areas from '../../static/instructor_areas.json';
-import { getDistanceRequest } from "../../utils/localServerRequests";
+import { getDistanceRequest, messagesRequest } from "../../utils/localServerRequests";
 import { uniques } from "../../utils/arrayUtils";
 
 import settingsConstants from '../../utils/settingsconstants.json';
@@ -37,9 +38,9 @@ const calculateDataSources = (selectedPlan, instructors, instructorPlacements) =
 
         for (const inst of instructors) {
             if (newCandidatesDSIds.includes(inst.id)) {
-                newCandidatesDS.push(inst);
+                newCandidatesDS.push({...inst, action: false});
             } else {
-                newOptionsDS.push(inst);
+                newOptionsDS.push({...inst, action: false});
             }
         }
 
@@ -75,14 +76,23 @@ const PlacementsPage2 = () => {
     const storeMethods = storeCtx.methods;
 
     const [selectedPlan, setSelectedPlan] = useState(null);
-    const handlePlanChange = plan => {
-        const school = storeLookupData.schools.get(plan.schoolId);
-        if (school) {
-            setSelectedPlan({...preparePlan(plan), city: school.city});
-        } else {
-            setSelectedPlan(preparePlan(plan));
+    const [selectedPlanId, setSelectedPlanId] = useState(null);
+    const handlePlanChange = useCallback(plan => {
+        setSelectedPlanId(plan.id);
+    }, []);
+    useEffect(() => {
+        if (selectedPlanId) {
+            const p = storeData.plans.find(p => p.id === selectedPlanId);
+            if (p) {
+                const school = storeLookupData.schools.get(p.schoolId);
+                if (school) {
+                    setSelectedPlan({...preparePlan(p), city: school.city});
+                } else {
+                    setSelectedPlan(preparePlan(p));
+                }
+            }
         }
-    };
+    }, [storeLookupData.schools, selectedPlanId, storeData.plans, handlePlanChange]);
 
     const [optionsDS, setOptionsDS] = useState([]);
     const [candidatesDS, setCandidatesDS] = useState([]);
@@ -120,9 +130,19 @@ const PlacementsPage2 = () => {
     }, [selectedPlan, storeData.instructors]);
 
     const distCalculateCellValue = useCallback(
-        data => selectedPlan.city === data.city ? 0 : (dists[data.city] || null),
+        data => (selectedPlan && selectedPlan.city === data.city) ? 0 : (dists[data.city] || null),
         [selectedPlan, dists]
     );
+
+    // Plan message template
+    const [msg, setMsg] = useState('');
+    useEffect(() => {
+        setMsg((selectedPlan && selectedPlan.msg) ? selectedPlan.msg : '');
+    }, [selectedPlan]);
+    const updatePlanMsg = useCallback(() => {
+        storeMethods.updatePlanMessage(selectedPlan.id, msg);
+    }, [storeMethods, selectedPlan, msg]);
+
     const instructorColumns = [
         <Column
             key="dist"
@@ -139,12 +159,14 @@ const PlacementsPage2 = () => {
             dataType="string"
             caption={pageText.firstName}
             cellRender={WhatsappCell}
+            allowEditing={false}
         />,
         <Column
             key="lastName"
             dataField="lastName"
             dataType="string"
             caption={pageText.lastName}
+            allowEditing={false}
         />,
         <Column
             key="cv"
@@ -152,12 +174,14 @@ const PlacementsPage2 = () => {
             dataType="string"
             caption={pageText.cvAbbrv}
             cellRender={LinkCell}
+            allowEditing={false}
         />,
         <Column
             key="city"
             dataField="city"
             dataType="string"
             caption={pageText.city}
+            allowEditing={false}
         />,
         <Column
             key="area"
@@ -165,39 +189,128 @@ const PlacementsPage2 = () => {
             dataType="string"
             caption={pageText.area}
             headerFilter={{ dataSource: areasHeaderFilterDS }}
+            allowEditing={false}
         />,
         <Column
             key="sector"
             dataField="sector"
             dataType="string"
             caption={pageText.sector}
+            allowEditing={false}
         />,
         <Column
             key="notes"
             dataField="notes"
             dataType="string"
             caption={pageText.notes}
+            allowEditing={false}
         />,
-        InstructorTypesColumn('instructorTypes'),
+        InstructorTypesColumn('instructorTypes', {allowEditing: false}),
     ];
-
-
 
     return (
         <div>
             <div className="placementsPageRow">
                 <div id="planCardContainer">
-                    <PlanCard plan={selectedPlan} />
+                    <PlanCard planId={(selectedPlan && selectedPlan.id) || null} />
                 </div>
                 <div>
                     <PlanMenu
                         selectedPlanId={selectedPlan ? selectedPlan.id : null}
                         selectedPlanYear={selectedPlan ? selectedPlan.year : null}
                         selectedPlanStatus={selectedPlan ? selectedPlan.status : null}
-                        setNewPlan={plan => {
-                            handlePlanChange(plan);
-                        }}
+                        setNewPlan={handlePlanChange}
                     />
+                    {selectedPlan && <>
+                        <Form.Group controlId="formMsgText">
+                            <Form.Label>{pageText.msgTextLabel}</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                rows={5}
+                                value={msg}
+                                onChange={e => { setMsg(e.target.value) }}
+                            />
+                        </Form.Group>
+                        <div className="flex-row">
+                            <Button
+                                variant="warning"
+                                onClick={() => {
+                                    const filteredPlacedInstructors = candidatesDS.filter(cand => cand.action);
+                                    messagesRequest(msg, '', '', filteredPlacedInstructors.map(placedInstructor => placedInstructor.firstName.split('#')[1]),
+                                    filteredPlacedInstructors.map(placedInstructor => placedInstructor.firstName.split('#')[0]), '', null,
+                                    null, null, () => {});
+                
+                                    // Updating colors in the database
+                                    /*
+                                    for (const placedInstructor of candidatesDS) {
+                                        if (placedInstructor.action) {
+                                            if (placedInstructor.id in instructorToColorId) {
+                                                ctxMethods.updateInstructorPlanColor(placedInstructor.id, selectedPlanId, placedColorDefault);
+                                            } else {
+                                                ctxMethods.addInstructorPlanColor(placedInstructor.id, selectedPlanId, placedColorDefault);
+                                            }
+                                        }
+                                    }
+                                    */
+                                }}>
+                                {pageText.sendMessagesToInstructors}
+                            </Button>
+
+                            <Button
+                                variant="warning"
+                                onClick={updatePlanMsg}>
+                                {pageText.saveMsg}
+                            </Button>
+
+                            <Button
+                                variant="warning"
+                                onClick={() => {
+                                    const instructorsLen = selectedPlan.instructors.length;
+
+                                    if (instructorsLen >= 4) {
+                                        alert(pageText.planIsFull);
+                                        return;
+                                    }
+
+                                    const instructorSlotsNum = 4;
+                                    const emptySlotsNum = instructorSlotsNum - instructorsLen;
+
+                                    const newInstructors = candidatesDS
+                                        .filter(pi => pi.action)
+                                        .map(pi => pi.firstName || '')
+
+                                    if (newInstructors.length > emptySlotsNum) {
+                                        alert(pageText.choseMoreCandidatesThanEmptySlots);
+                                        return;
+                                    }
+                                    else if (newInstructors.length === 0) {
+                                        alert(pageText.noChosenCandidates);
+                                        return;
+                                    }
+
+                                    storeMethods.placeCandidates(selectedPlan.id, newInstructors, instructorsLen + 1);
+                                }}
+                            >
+                                {pageText.placeCandidate}
+                            </Button>
+
+                            {pageText.unplacePlanInstructor}
+                            <span className="smallGapRow">
+                                <Button variant="info" onClick={() => storeMethods.cancelCandidatePlacement(selectedPlan.id, 1)}>
+                                    1
+                                </Button>
+                                <Button variant="info" onClick={() => storeMethods.cancelCandidatePlacement(selectedPlan.id, 2)}>
+                                    2
+                                </Button>
+                                <Button variant="info" onClick={() => storeMethods.cancelCandidatePlacement(selectedPlan.id, 3)}>
+                                    3
+                                </Button>
+                                <Button variant="info" onClick={() => storeMethods.cancelCandidatePlacement(selectedPlan.id, 4)}>
+                                    4
+                                </Button>
+                            </span>
+                        </div>
+                    </>}
                 </div>
             </div>
             <div className="placementsPageRow">
@@ -243,7 +356,20 @@ const PlacementsPage2 = () => {
                             type='localStorage'
                             storageKey='placementsCandidatesDataGridStateStoring'
                         />
+                        <Editing
+                            mode="cell"
+                            allowAdding={false}
+                            allowDeleting={false}
+                            allowUpdating={true}
+                        />
 
+                        <Column
+                            caption={pageText.action}
+                            dataField="action"
+                            dataType="boolean"
+                            allowSorting={false}
+                            allowFiltering={false}
+                        />
                         {instructorColumns}
                     </DataGrid>
                 </div>

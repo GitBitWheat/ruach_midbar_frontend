@@ -10,5 +10,14 @@
     "notes": "הערות",
     "types": "תחומים",
     "instructorTypes": "סוגים",
-    "dist": "מרחק"
+    "dist": "מרחק",
+    "action": "בחר",
+
+    "sendMessagesToInstructors": "שלח הודעות למדריכים",
+    "saveMsg": "שמור נוסח",
+    "placeCandidate": "שבץ מועמד",
+
+    "planIsFull": "כל מקומות המדריכים של התוכנית מלאים",
+    "choseMoreCandidatesThanEmptySlots": "בחרת יותר מועמדים משיש מקומות לשיבוץ",
+    "noChosenCandidates": "לא בחרת מועמדים לשיבוץ"
 }

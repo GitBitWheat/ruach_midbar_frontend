@@ -14,3 +14,7 @@
 #planCardContainer {
     width: 30vw;
 }
+
+.smallGapRow > * {
+    margin-left: 3px;
+}

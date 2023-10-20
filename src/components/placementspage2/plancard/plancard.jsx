@@ -1,11 +1,28 @@
 import { Fragment } from "react";
+import { useState, useEffect, useContext } from "react";
+import { SchoolsContext } from "../../../store/SchoolsContextProvider";
 import { Container, Row, Col } from "react-bootstrap";
 import pageText from './plancard-text.json'
 import { linkToA } from '../../../utils/displayutils';
 
+const PlanCard = ({ planId }) => {
+    
+    const storeCtx = useContext(SchoolsContext);
+    const storeData = storeCtx.data;
+    const [plan, setPlan] = useState({});
+    useEffect(() => {
+        if (planId) {
+            const p = storeData.plans.find(p => p.id === planId);
+            setPlan(p ? ({
+                ...p,
+                instructors: [p.instructor1, p.instructor2, p.instructor3, p.instructor4]
+                            .filter(inst => inst)
+            } || {}) : {});
+        } else {
+            setPlan({});
+        }
+    }, [storeData.plans, planId]);
 
-
-const PlanCard = ({ plan }) => {
     return (
         <Container>
             <Row>
@@ -70,7 +87,7 @@ const PlanCard = ({ plan }) => {
                 <Row>
                     <Col>
                         <b>{`${pageText.instructors}: `}</b>
-                        {(plan.instructors.map((instructor, idx) => (
+                        {((plan.instructors || []).map((instructor, idx) => (
                                 <Fragment key={idx}>
                                     {linkToA(instructor, false)}
                                     {idx < plan.instructors.length - 1 ? ', ' : null}
