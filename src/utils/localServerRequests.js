@@ -458,24 +458,28 @@ export async function listInstructorFiles(area, city, name, dirNames) {
     }
 }
 
-export function getDistanceRequest(origin, destinations) {
-    return new Promise(resolve => {
-        const data = {
-            origin: origin,
-            destinations: destinations
-        };
-        const serializedData = JSON.stringify(data);
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            timeout: 60 * 1000 // 60 seconds
-        };
-        api.post('http://localhost:8000/city_distances/', serializedData, config)
-            .then((response) => {
-                resolve(response.data.dists);
-            });
-    });
+export async function getDistanceRequest(origin, destinations) {
+    const data = {
+        origin: origin,
+        destinations: destinations
+    };
+    const serializedData = JSON.stringify(data);
+    const config = {
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        timeout: 60 * 1000 // 60 seconds
+    };
+    try {
+        const response = await api.post(
+            'http://localhost:8000/city_distances/', serializedData, config
+        );
+        console.log(response);
+        return response.data.dists;
+    } catch (error) {
+        console.error(error);
+        return null;
+    }
 }
 
 

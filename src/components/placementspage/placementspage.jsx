@@ -225,8 +225,8 @@ const PlacementsPage = () => {
                 ? ctxData.instructorPlacements.every(placement => placement.instructorId !== instructor.id || placement.planId !== selectedPlanId) : true);
             
             const dists = await getDistance(selectedPlan.city, si.map(inst => inst.city));
-            si = si.map((inst, idx) =>
-                ({...inst, distance: inst.city === selectedPlan.city ? 0 : dists[idx]})
+            si = si.map(inst =>
+                ({...inst, distance: inst.city === selectedPlan.city ? 0 : dists[inst.city]})
             );
 
             setSelectedInstructors(si);
@@ -315,7 +315,7 @@ const PlacementsPage = () => {
 
 
 
-    const [placedInstructorsDists, setPlacedInstructorsDists] = useState([]);
+    const [placedInstructorsDists, setPlacedInstructorsDists] = useState({});
     useEffect(() => {
         (async () => {
             setPlacedInstructorsDists(await getDistance(selectedPlan.city, placedInstructors.map(inst => inst.city)));
@@ -579,8 +579,8 @@ const PlacementsPage = () => {
                     <DataTable
                         name="placedInstructors-datatable"
                         columns={placedInstructorColumns}
-                        rows={placedInstructors.map((inst, idx) => ({...inst, distance: inst.city === selectedPlan.city ? 0 :
-                            (idx < placedInstructorsDists.length ? placedInstructorsDists[idx] : -1)}))}
+                        rows={placedInstructors.map(inst => ({...inst,
+                            distance: inst.city === selectedPlan.city ? 0 : placedInstructorsDists[inst.city]}))}
                         customColDisplay={placedInstructorTablesCustomColDisplay}
                         customColSort={instructorTablesCustomColSort}
                         defaultSortedCol={'distance'}
