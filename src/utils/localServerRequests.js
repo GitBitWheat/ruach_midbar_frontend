@@ -70,7 +70,7 @@ export function messagesRequest(msg1 = null, msg2 = null, msg3 = null, phones, n
         },
         timeout: 3 * 3600 * 1000 //3 hours
     };
-    api.post('http://localhost:8000/messageshandler/sendmessages/', serializedData, config)
+    api.post('http://localhost:8000/sendmessages/', serializedData, config)
         .then((response) => {
             setMsgStatuses(response.data.msg_statuses);
         })
@@ -79,7 +79,7 @@ export function messagesRequest(msg1 = null, msg2 = null, msg3 = null, phones, n
 
 
 export function getDataRequest(setter) {
-    axios.get('http://localhost:8000/messageshandler/getdata/')
+    axios.get('http://localhost:8000/getdata/')
         .then((response) => {
             setter(response.data);
         })
@@ -101,14 +101,14 @@ export function addMsgPatternRequest(msg1, msg2, msg3, title, process) {
         },
         timeout: 60 * 1000 // 60 seconds
     };
-    api.post('http://localhost:8000/messageshandler/addmsgpattern/', serializedData, config)
+    api.post('http://localhost:8000/addmsgpattern/', serializedData, config)
         .then((response) => {
             process(response.data.id);
         })
 }
 
 export function deleteMsgPatternRequest(msgId) {
-    api.delete(`http://localhost:8000/messageshandler/deletemsgpattern/${msgId}/`)
+    api.delete(`http://localhost:8000/deletemsgpattern/${msgId}/`)
         .then((_) => {
             console.log(`Successfully deleted message pattern ${msgId}`);
         })
@@ -132,7 +132,7 @@ export async function addInstructorPlacementRequest(instructorId, planId) {
     
     try {
         await api.post(
-            'http://localhost:8000/messageshandler/addinstructorplacement/',
+            'http://localhost:8000/addinstructorplacement/',
             serializedData, config
         );
         return true;
@@ -146,7 +146,7 @@ export async function addInstructorPlacementRequest(instructorId, planId) {
 export async function deleteInstructorPlacementRequest(instructorId, planId) {
     try {
         await api.delete(
-            `http://localhost:8000/messageshandler/deleteinstructorplacement/${instructorId}/${planId}/`
+            `http://localhost:8000/deleteinstructorplacement/${instructorId}/${planId}/`
         );
         console.log(`Successfully canceled instructor placement ${instructorId}, ${planId}`);
         return true;
@@ -172,7 +172,7 @@ export function addInstructorPlanColorRequest(instructorId, planId, colorId) {
         },
         timeout: 60 * 1000 // 60 seconds
     };
-    api.post('http://localhost:8000/messageshandler/addinstructorplancolor/', serializedData, config);
+    api.post('http://localhost:8000/addinstructorplancolor/', serializedData, config);
 }
 
 export function updateInstructorPlanColorRequest(instructorId, planId, colorId) {
@@ -188,12 +188,12 @@ export function updateInstructorPlanColorRequest(instructorId, planId, colorId) 
         },
         timeout: 60 * 1000 // 60 seconds
     };
-    api.post('http://localhost:8000/messageshandler/updateinstructorplancolor/', serializedData, config);
+    api.post('http://localhost:8000/updateinstructorplancolor/', serializedData, config);
 }
 
 // Canceling placement of an instructor
 export function deleteInstructorPlanColorRequest(instructorId, planId) {
-    api.delete(`http://localhost:8000/messageshandler/deleteinstructorplancolor/${instructorId}/${planId}/`)
+    api.delete(`http://localhost:8000/deleteinstructorplancolor/${instructorId}/${planId}/`)
         .then((_) => {
             console.log(`Successfully deleted instructor ${instructorId} plan ${planId} color`);
         })
@@ -213,7 +213,7 @@ export async function updatePlanMessageRequest(planId, msg) {
         timeout: 60 * 1000 // 60 seconds
     };
     try {
-        await api.post('http://localhost:8000/messageshandler/updateplanmsgrequest/', serializedData, config);
+        await api.post('http://localhost:8000/updateplanmsgrequest/', serializedData, config);
         return true;
     } catch(err) {
         console.log(err);
@@ -236,7 +236,7 @@ export function addPlanButtonsRequest(planId, buttons) {
         },
         timeout: 60 * 1000 // 60 seconds
     };
-    api.post('http://localhost:8000/messageshandler/addplanbuttons/', serializedData, config);
+    api.post('http://localhost:8000/addplanbuttons/', serializedData, config);
 }
 
 export function deletePlanButtonsRequest(planId, buttons) {
@@ -251,7 +251,7 @@ export function deletePlanButtonsRequest(planId, buttons) {
         },
         timeout: 60 * 1000 // 60 seconds
     };
-    api.post('http://localhost:8000/messageshandler/deleteplanbuttons/', serializedData, config);
+    api.post('http://localhost:8000/deleteplanbuttons/', serializedData, config);
 }
 
 // Updating the candidates that have been placed to a plan
@@ -271,7 +271,7 @@ export async function updatePlanPlacedCandidatesRequest(planId, instructor1, ins
         timeout: 60 * 1000 // 60 seconds
     };
     try {
-        await api.post('http://localhost:8000/messageshandler/updateplanplacedcandidates/', serializedData, config);
+        await api.post('http://localhost:8000/updateplanplacedcandidates/', serializedData, config);
         return true;
     } catch(err) {
         console.log(err);
@@ -292,7 +292,7 @@ export function updateInstructorNotesRequest(instructorId, notes) {
         },
         timeout: 60 * 1000 // 60 seconds
     };
-    api.post('http://localhost:8000/messageshandler/updateinstructornotes/', serializedData, config);
+    api.post('http://localhost:8000/updateinstructornotes/', serializedData, config);
 }
 
 
@@ -307,7 +307,7 @@ export async function addInstructorRequest(data) {
     };
     
     try {
-        const response = await api.post('http://localhost:8000/messageshandler/addinstructor/', serializedData, config);
+        const response = await api.post('http://localhost:8000/addinstructor/', serializedData, config);
         return response.data.id;
     } catch (error) {
         console.error(error);
@@ -319,7 +319,7 @@ export async function addInstructorRequest(data) {
 
 export async function deleteInstructorRequest(instructorId) {
     try {
-        await api.delete(`http://localhost:8000/messageshandler/deleteinstructor/${instructorId}/`);
+        await api.delete(`http://localhost:8000/deleteinstructor/${instructorId}/`);
         return true;
     } catch (err) {
         console.error(err);
@@ -343,7 +343,7 @@ export async function updateInstructorRequest(instructorId, instructorData) {
     };
 
     try {
-        await api.post('http://localhost:8000/messageshandler/updateinstructor/', serializedData, config);
+        await api.post('http://localhost:8000/updateinstructor/', serializedData, config);
         return true;
     } catch (error) {
         console.error(error);
@@ -363,7 +363,7 @@ export async function uploadFileToDrive(file) {
     };
     try {
         const response =
-            await api.post('http://localhost:8000/messageshandler/uploadfiletodrive/', formData, config);
+            await api.post('http://localhost:8000/uploadfiletodrive/', formData, config);
         console.log(response);
         return response.data.drive_link;
     } catch (error) {
@@ -388,7 +388,7 @@ export async function uploadInstructorFileToDrive(file, area, city, name, dirNam
     };
     try {
         const response =
-            await api.post('http://localhost:8000/messageshandler/uploadinstructorfiletodrive/', formData, config);
+            await api.post('http://localhost:8000/uploadinstructorfiletodrive/', formData, config);
         console.log(response);
         return response.data;
     } catch (error) {
@@ -411,7 +411,7 @@ export async function uploadInstructorFileToDriveMultiple(file, area, city, name
     };
     try {
         const response =
-            await api.post('http://localhost:8000/messageshandler/uploadinstructorfiletodrivemultiple/',
+            await api.post('http://localhost:8000/uploadinstructorfiletodrivemultiple/',
             formData, config);
         console.log(response);
         return response.data;
@@ -423,7 +423,7 @@ export async function uploadInstructorFileToDriveMultiple(file, area, city, name
 
 export async function deleteDriveFileRequest(fileId) {
     try {
-        await api.delete(`http://localhost:8000/messageshandler/deletedrivefile/${fileId}/`);
+        await api.delete(`http://localhost:8000/deletedrivefile/${fileId}/`);
         return true;
     } catch (err) {
         console.error(err);
@@ -448,7 +448,7 @@ export async function listInstructorFiles(area, city, name, dirNames) {
 
     try {
         const response = await api.post(
-            'http://localhost:8000/messageshandler/listinstructorfiles/', serializedData, config
+            'http://localhost:8000/listinstructorfiles/', serializedData, config
         );
         console.log(response);
         return response.data.instructorFiles;
@@ -471,7 +471,7 @@ export function getDistanceRequest(origin, destinations) {
             },
             timeout: 60 * 1000 // 60 seconds
         };
-        api.post('http://localhost:8000/messageshandler/city_distances/', serializedData, config)
+        api.post('http://localhost:8000/city_distances/', serializedData, config)
             .then((response) => {
                 resolve(response.data.dists);
             });
@@ -495,7 +495,7 @@ export async function updateSchoolRequest(schoolId, schoolData) {
     };
     
     try {
-        await api.post('http://localhost:8000/messageshandler/updateschool/', serializedData, config);
+        await api.post('http://localhost:8000/updateschool/', serializedData, config);
         return true;
     } catch (error) {
         console.error(error);
@@ -514,7 +514,7 @@ export async function addSchoolRequest(data) {
     };
 
     try {
-        const response = await api.post('http://localhost:8000/messageshandler/addschool/', serializedData, config);
+        const response = await api.post('http://localhost:8000/addschool/', serializedData, config);
         return response.data.id;
     } catch (error) {
         console.error(error);
@@ -526,7 +526,7 @@ export async function addSchoolRequest(data) {
 
 export async function deleteSchoolRequest(schoolId) {
     try {
-        await api.delete(`http://localhost:8000/messageshandler/deleteschool/${schoolId}/`);
+        await api.delete(`http://localhost:8000/deleteschool/${schoolId}/`);
         return true;
     } catch (err) {
         console.error(err);
@@ -550,7 +550,7 @@ export async function updateContactRequest(contactId, contactData) {
     };
 
     try {
-        await api.post('http://localhost:8000/messageshandler/updatecontact/', serializedData, config);
+        await api.post('http://localhost:8000/updatecontact/', serializedData, config);
         return true;
     } catch (err) {
         console.error(err);
@@ -570,7 +570,7 @@ export async function addContactRequest(data) {
     };
 
     try {
-        const response = await api.post('http://localhost:8000/messageshandler/addcontact/', serializedData, config);
+        const response = await api.post('http://localhost:8000/addcontact/', serializedData, config);
         return response.data.id;
     } catch (error) {
         console.error(error);
@@ -580,7 +580,7 @@ export async function addContactRequest(data) {
 
 export async function deleteContactRequest(contactId) {
     try {
-        await api.delete(`http://localhost:8000/messageshandler/deletecontact/${contactId}/`);
+        await api.delete(`http://localhost:8000/deletecontact/${contactId}/`);
         return true;
     } catch (err) {
         console.error(err);
@@ -604,7 +604,7 @@ export async function uploadToGoogleContacts(name, phone) {
     };
 
     try {
-        const response = await api.post('http://localhost:8000/messageshandler/uploadgooglecontact/', serializedData, config);
+        const response = await api.post('http://localhost:8000/uploadgooglecontact/', serializedData, config);
         return response.data;
     } catch (error) {
         console.error(error);
@@ -627,7 +627,7 @@ export async function updateGoogleContactRequest(resourceName, name, phone) {
     };
 
     try {
-        await api.post('http://localhost:8000/messageshandler/updategooglecontact/', serializedData, config);
+        await api.post('http://localhost:8000/updategooglecontact/', serializedData, config);
         return true;
     } catch (error) {
         console.error(error);
@@ -637,7 +637,7 @@ export async function updateGoogleContactRequest(resourceName, name, phone) {
 
 export async function deleteGoogleContactRequest(resourceName) {
     try {
-        await api.delete(`http://localhost:8000/messageshandler/deletegooglecontact/${resourceName}/`);
+        await api.delete(`http://localhost:8000/deletegooglecontact/${resourceName}/`);
         return true;
     } catch (err) {
         console.error(err);
@@ -658,7 +658,7 @@ export async function uploadProposalToDrive(proposalFile, year, district, city, 
         }
     };
     try {
-        const response = await api.post('http://localhost:8000/messageshandler/uploadproposaltodrive/', formData, config);
+        const response = await api.post('http://localhost:8000/uploadproposaltodrive/', formData, config);
         console.log(response);
         return response.data.drive_link;
     } catch (error) {
@@ -679,7 +679,7 @@ export async function addPaymentRequest(data) {
     };
 
     try {
-        const response = await api.post('http://localhost:8000/messageshandler/addpayment/', serializedData, config);
+        const response = await api.post('http://localhost:8000/addpayment/', serializedData, config);
         return response.data.id;
     } catch (error) {
         console.error(error);
@@ -703,7 +703,7 @@ export async function updatePaymentRequest(paymentId, paymentData) {
     };
 
     try {
-        await api.post('http://localhost:8000/messageshandler/updatepayment/', serializedData, config);
+        await api.post('http://localhost:8000/updatepayment/', serializedData, config);
         return true;
     } catch (error) {
         console.error(error);
@@ -715,7 +715,7 @@ export async function updatePaymentRequest(paymentId, paymentData) {
 
 export async function deletePaymentRequest(paymentId) {
     try {
-        await api.delete(`http://localhost:8000/messageshandler/deletepayment/${paymentId}/`);
+        await api.delete(`http://localhost:8000/deletepayment/${paymentId}/`);
         return true;
     } catch (err) {
         console.error(err);
@@ -737,7 +737,7 @@ export async function updateInvitationRequest(invitationId, invitationData) {
     };
 
     try {
-        await api.post('http://localhost:8000/messageshandler/updateinvitation/', serializedData, config);
+        await api.post('http://localhost:8000/updateinvitation/', serializedData, config);
         return true;
     } catch (error) {
         console.error(error);
@@ -755,7 +755,7 @@ export async function addInvitationRequest(data) {
     };
 
     try {
-        const response = await api.post('http://localhost:8000/messageshandler/addinvitation/', serializedData, config);
+        const response = await api.post('http://localhost:8000/addinvitation/', serializedData, config);
         return response.data.id;
     } catch (error) {
         console.error(error);
@@ -765,7 +765,7 @@ export async function addInvitationRequest(data) {
 
 export async function deleteInvitationRequest(invitationId) {
     try {
-        await api.delete(`http://localhost:8000/messageshandler/deleteinvitation/${invitationId}/`);
+        await api.delete(`http://localhost:8000/deleteinvitation/${invitationId}/`);
         return true;
     } catch (err) {
         console.error(err);
@@ -787,7 +787,7 @@ export async function addPlanRequest(data) {
     };
 
     try {
-        const response = await api.post('http://localhost:8000/messageshandler/addplan/', serializedData, config);
+        const response = await api.post('http://localhost:8000/addplan/', serializedData, config);
 		console.log('DB - addPlanRequest response: ', response.data);
         return response.data.id;
     } catch (error) {
@@ -811,7 +811,7 @@ export async function updatePlanRequest(planId, planData) {
 
 
     try {
-        await api.post('http://localhost:8000/messageshandler/updateplan/', serializedData, config);
+        await api.post('http://localhost:8000/updateplan/', serializedData, config);
         return true;
     } catch (error) {
         console.error(error);
@@ -823,7 +823,7 @@ export async function updatePlanRequest(planId, planData) {
 
 export async function deletePlanRequest(planId) {
     try {
-        await api.delete(`http://localhost:8000/messageshandler/deleteplan/${planId}/`);
+        await api.delete(`http://localhost:8000/deleteplan/${planId}/`);
         return true;
     } catch (err) {
         console.error(err);
@@ -843,7 +843,7 @@ export async function updateSettingsRequest(data) {
     };
 
     try {
-        await api.post('http://localhost:8000/messageshandler/updatesettings/', serializedData, config);
+        await api.post('http://localhost:8000/updatesettings/', serializedData, config);
         return true;
     } catch (error) {
         console.error(error);
@@ -859,7 +859,7 @@ export async function updatePeopleCreds() {
         timeout: 60 * 1000 // 60 seconds
     };
     try {
-        await api.post('http://localhost:8000/messageshandler/updatepeoplecreds/', {}, config);
+        await api.post('http://localhost:8000/updatepeoplecreds/', {}, config);
         return true;
     } catch (error) {
         console.error(error);
@@ -874,7 +874,7 @@ export async function updateInstructorsCreds() {
         timeout: 60 * 1000 // 60 seconds
     };
     try {
-        await api.post('http://localhost:8000/messageshandler/updatepeoplecreds/', {}, config);
+        await api.post('http://localhost:8000/updatepeoplecreds/', {}, config);
         return true;
     } catch (error) {
         console.error(error);
@@ -889,7 +889,7 @@ export async function updateProposalCreds() {
         timeout: 60 * 1000 // 60 seconds
     };
     try {
-        await api.post('http://localhost:8000/messageshandler/updatepeoplecreds/', {}, config);
+        await api.post('http://localhost:8000/updatepeoplecreds/', {}, config);
         return true;
     } catch (error) {
         console.error(error);
