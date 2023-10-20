@@ -1,0 +1,28 @@
+.formGrid, .container-fluid.formGrid {
+    padding-left: 5vw;
+    padding-right: 5vw;
+    margin-left: 0vh;
+    margin-right: 0vh;
+    padding-top: 0.5vh;
+    padding-bottom: 0.5vh;
+}
+
+.formGrid .col {
+    text-align: right;
+}
+
+.formGrid .col > * {
+    margin-left: 1vw;
+}
+
+.formGrid p.errorMessage {
+    color: red;
+}
+
+.borderedColumns > .col {
+    padding: 1.5%
+}
+
+.addMessagePatternSearchBar {
+    width: 100%;
+}

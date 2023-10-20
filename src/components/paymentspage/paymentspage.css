@@ -1,0 +1,7 @@
+.paymentsPageMainTable {
+    width: 100%;
+}
+table.paymentsPageMainTable > tbody > tr > td {
+    width: 33.33%;
+    vertical-align: top;
+}

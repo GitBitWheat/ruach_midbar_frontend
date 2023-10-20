@@ -1,0 +1,44 @@
+{
+    "year": "שנה",
+    "proposal": "הצעה",
+    "status": "סטטוס",
+    "invitation": "הזמנה",
+    "level": "שלב",
+    "sym": "סמל",
+    "institution": "בית ספר",
+    "contact": "איש קשר",
+    "date": "תאריך",
+    "district": "מחוז",
+    "city": "יישוב",
+    "plan": "תוכנית",
+    "days": "ימים",
+    "day": "יום נבחר",
+    "weeks": "שבועות",
+    "grade": "שכבה",
+    "lessonsPerDay": "שיעורים ביום",
+    "lessons": "כמות שיעורים",
+    "pricePerHour": "עלות שעה",
+    "overall": "סהכ",
+    "instructors": "מדריכים",
+    "details": "פרטים",
+
+    "schoolNonExistentError": "לא קיים",
+
+    "overallPricing": "סה\"כ תשלום",
+    "overallPricingByFilters": "לפי כלל המסננים",
+    "overallPricingByYear": "לפי השנה הנבחרת",
+
+    "none": "כלום",
+    "placements": "שיבוצים",
+    "deletePlan": "מחיקת תוכנית",
+    "addPlan": "הוסף תוכנית",
+
+    "empty": "ריקים",
+    "noName": "<אין שם>",
+
+    "updatePhone": "עדכן טלפון",
+    "proposalUploadFailed": "לא הצליח להעלות את ההצעה",
+    "notEnoughParameters": "לא מספיק פרטים על התוכנית על מנת להעלות הצעה",
+
+    "search": "חפש תוכנית..."
+}

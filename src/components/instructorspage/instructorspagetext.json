@@ -1,0 +1,34 @@
+{
+    "firstName": "שם פרטי",
+    "lastName": "שם משפחה",
+    "placed": "משובץ בתוכנית",
+    "phone": "טלפון",
+    "cv": "קורות חיים",
+    "cvAbbrv": "קוח",
+    "city": "יישוב",
+    "area": "אזור",
+    "sector": "מגזר",
+    "notes": "הערות",
+    "types": "תחומים",
+    "certificates": "תעודות",
+    "policeApproval": "אישור משטרה",
+    "insurance": "ביטוח",
+    "agreement": "הסכם",
+    "instructorTypes": "סוגים",
+
+    "addInstructor": "הוספת מדריך",
+    "updatePhone": "עדכן טלפון",
+    "empty": "ריקים",
+
+    "addInstructorPopupMessage": "האם אתם רוצים להוסיף את המדריכ/ה?",
+    "deleteInstructorPopupMessage": "האם אתם רוצים להסיר את המדריכ/ה?",
+
+    "search": "חפש מדריך...",
+
+    "addFile": "הוסף קובץ",
+    "files": "קבצים",
+    "dirName": "סוג קובץ",
+
+    "proposalUploadFailed": "לא הצליח להעלות את הקובץ לדרייב",
+    "notEnoughParameters": "לא מספיק פרטים על המדריך על מנת להעלות קובץ לדרייב"
+}

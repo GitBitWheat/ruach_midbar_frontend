@@ -1,0 +1,13 @@
+{
+    "firstName": "שם פרטי",
+    "lastName": "שם משפחה",
+    "phone": "טלפון",
+    "cv": "קורות חיים",
+    "cvAbbrv": "קוח",
+    "city": "יישוב",
+    "area": "אזור",
+    "sector": "מגזר",
+    "notes": "הערות",
+    "types": "תחומים",
+    "instructorTypes": "סוגים"
+}

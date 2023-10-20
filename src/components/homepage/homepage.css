@@ -1,0 +1,15 @@
+.homepageContainer.container-fluid {
+    padding-left: 15vw;
+    padding-right: 15vw;
+    margin-left: 0vh;
+    margin-right: 0vh;
+}
+
+.homepageContainer > .row {
+    margin-top: 2.5vh;
+    margin-bottom: 2.5vh;
+}
+
+.homepageContainer .col {
+    text-align: right;
+}

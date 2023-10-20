@@ -1,0 +1,12 @@
+#statusTablesPage {
+    padding-left: 15vw;
+    padding-right: 15vw;
+    margin-left: 0vh;
+    margin-right: 0vh;
+    padding-top: 2vh;
+    padding-bottom: 2vh;
+
+    display: flex;
+    flex-direction: column;
+    gap: 2vh;
+}

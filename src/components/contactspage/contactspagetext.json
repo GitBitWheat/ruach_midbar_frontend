@@ -1,0 +1,13 @@
+{
+    "turnRep": "נציג",
+    "schoolName": "בית הספר",
+	"firstName": "פרטי",
+	"lastName": "משפחה",
+	"phone": "טלפון",
+	"role": "תפקיד",
+    "whatsapp": "ווצאפ",
+	"status": "סטטוס",
+
+    "schoolNonExistentError": "לא קיים",
+    "googleContactsLink": "קישור לגוגל"
+}

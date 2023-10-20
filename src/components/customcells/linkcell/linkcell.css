@@ -1,0 +1,9 @@
+.linkEditCellRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.linkEditCellRow > div {
+    width: 50%;
+}

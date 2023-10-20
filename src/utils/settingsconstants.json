@@ -1,0 +1,14 @@
+{
+    "dataGridRowsPageSize": 20,
+    "columnLookupPageSize": 20,
+    "headerFilterHeight": 600,
+    "selectBoxPageSize": 20,
+    "dataGridDefaultProps": {
+        "showBorders": true,
+        "rtlEnabled": true,
+        "columnAutoWidth": true,
+        "columnResizingMode": "widget",
+        "allowColumnResizing": true,
+        "allowColumnReordering": true
+    }
+}

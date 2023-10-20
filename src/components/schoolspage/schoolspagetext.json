@@ -1,0 +1,30 @@
+{
+    "name": "בית ספר",
+    "sym": "סמל",
+    "level": "שלב חינוך",
+    "sector": "מגזר",
+    "schoolType": "סוג",
+    "city": "עיר",
+    "representative": "נציג",
+    "date": "תאריך",
+    "status": "סטטוס",
+
+    "turnRep": "נציג",
+    "whatsapp": "ווצאפ",
+    "searchSchool": "חפש בית ספר...",
+    "searchContact": "חפש איש קשר...",
+
+    "schoolName": "בית הספר",
+	"firstName": "פרטי",
+	"lastName": "משפחה",
+	"phone": "טלפון",
+	"role": "תפקיד",
+    "contactStatus": "סטטוס",
+    "googleContactsLink": "קישור לגוגל",
+
+    "failedDeleteGoogleContact": "לא הצליח למחוק את איש הקשר מגוגל",
+    "failedUpdateGoogleContact": "לא הצליח לעדכן את פרטי איש הקשר בגוגל",
+    "failedUploadGoogleContact": "לא הצליח להעלות את פרטי איש הקשר לגוגל",
+    "noGoogleContact": "אין איש קשר בגוגל",
+    "notEnoughParameters": "לא מספיק פרטים על מנת להעלות לגוגל"
+}

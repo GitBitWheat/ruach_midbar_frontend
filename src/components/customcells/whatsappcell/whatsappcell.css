@@ -1,0 +1,9 @@
+.whatsappEditCellRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.whatsappEditCellRow > div {
+    width: 50%;
+}

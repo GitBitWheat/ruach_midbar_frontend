@@ -1,0 +1,43 @@
+.iupGrid, .container-fluid.iupGrid {
+    padding-left: 5vw;
+    padding-right: 5vw;
+    margin-left: 0vh;
+    margin-right: 0vh;
+    padding-top: 0.5vh;
+    padding-bottom: 0.5vh;
+}
+
+.iupGrid .row {
+    padding-bottom: 1vh;
+}
+
+.iupGrid .col {
+    text-align: right;
+    position: relative;
+}
+
+.iupGrid .col > button {
+    position: absolute;
+    bottom: 0;
+}
+
+
+
+.topChildren {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.labelText {
+    margin-bottom: 8px;
+}
+
+
+
+.filesRow {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    gap: 1vw;
+}

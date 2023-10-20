@@ -1,0 +1,16 @@
+{
+    "CONTACT_NAME": "איש קשר",
+    "SCHOOL_NAME": "בית ספר",
+
+    "SUCCESSFUL": "הצליח",
+    "COULD_NOT_SEND": "שליחה נכשלה",
+    "WRONG_PHONE": "טלפון שגוי",
+    "FAILED_SENDING_VALIDATION": "וידוי השליחה נכשל",
+    "INVALID_INPUT": "קלט שגוי",
+    "COULD_NOT_LOAD_PAGE": "כנראה טלפון שגוי",
+
+    "MSG1": "הודעת טקסט 1",
+    "MSG2": "הודעת קובץ",
+    "MSG3": "הודעת טקסט 2",
+    "GENERAL_FAIL": "כישלון כל ההודעות"
+}

@@ -1,0 +1,16 @@
+.navbarSelectedOption {
+    color: white;
+    font-weight: bold;
+}
+
+#basepage {
+    text-align: right;
+}
+
+.dx-datagrid {  
+    font-size: 16px;
+}
+
+.dataError {
+    color: red;
+}

@@ -1,0 +1,17 @@
+.pageContainer.container-fluid {
+    padding-left: 0vw;
+    padding-right: 0vw;
+    margin-left: 0vh;
+    margin-right: 0vh;
+}
+
+.pageContainer .col {
+    text-align: right;
+}
+
+.horizontalRadios {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 2vw;
+}

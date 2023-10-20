@@ -1,0 +1,40 @@
+{
+    "schools": "בתי ספר",
+    "contacts": "אנשי קשר",
+    "plans": "תוכניות",
+    "pricing": "תמחור",
+    "payments": "שולם",
+    "invitations": "תשלומים בדרך",
+    "left": "נותר",
+    "selectYear": "בחר שנה...",
+
+    "sym": "סמל",
+    "school": "בית ספר",
+    "city": "יישוב",
+    "level": "שלב חינוך",
+    "invitation": "הזמנה",
+    "year": "שנה",
+
+    "firstName": "פרטי",
+    "lastName": "משפחה",
+    "role": "תפקיד",
+    "phone": "טלפון",
+    "whatsapp": "ווצאפ",
+
+    "status": "סטטוס",
+    "plan": "תוכנית",
+    "day": "יום",
+    "instructors": "מדריכים",
+
+    "lessons": "כמות",
+    "pricePerHour": "עלות שיעור",
+    "overall": "תמחור כולל",
+
+    "issuer": "מנפיק",
+    "schoolName": "בי\"ס",
+    "payed": "סכום",
+
+    "issueDate": "תאריך הנפקה",
+    "planName": "תוכנית",
+    "checkDate": "מועד העברה"
+}

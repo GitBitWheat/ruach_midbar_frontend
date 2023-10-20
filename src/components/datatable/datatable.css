@@ -1,0 +1,90 @@
+#datatableWrapper {
+    padding: 0px 0px 0px 0px;
+}
+table.datatableTable {
+    text-align: right;
+    margin-bottom: 0vh;
+    position: relative;
+}
+table.datatableTable > thead {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: white;
+    background-clip: padding-box;
+}
+
+.emptyRow {
+    height: 4vh
+}
+
+table.datatableTable th.datatableHeaderItem {
+    padding-top: 0vh;
+    padding-right: 0vh;
+    padding-left: 0vh;
+    z-index: 11;
+}
+.datatableHeaderItem > .container-fluid {
+    padding: 0vh 0vh 0vh 0vh;
+    margin: 0vh 0vh 0vh 0vh;
+}
+.datatableHeaderItem > .container-fluid > .row {
+    padding: 0vh 0vh 0vh 0vh;
+    margin: 0vh 0vh 0vh 0vh;
+}
+.datatableHeaderItem > .container-fluid > .row > .col {
+    padding: 0vh 0vh 0vh 0vh;
+    margin: 0vh 0vh 0vh 0vh;
+}
+
+.datatableHeaderItem > .container-fluid > .row:nth-child(1) {
+    height: 1.5vh;
+    margin-bottom: 0.10vh;
+}
+.datatableHeaderItem > .container-fluid > .row:nth-child(1) > .col {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.col.filterCaret {
+    max-width: fit-content;
+}
+.filterCaret > i {
+    float: left;
+}
+
+.breakWordCell {
+    word-break: break-word;
+}
+
+.datatableFilterBox {
+    position: absolute;
+    width: 10vw;
+    height: 20vh;
+    z-index: 1;
+}
+.filterBoxForm {
+    text-align: left;
+}
+.filterBoxForm > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.scrollBox {
+    border: 1px solid black;
+    overflow: auto;
+    background-color: white;
+}
+
+.hoverableRow:hover {
+    background-color: #f5f5f5;
+    cursor: pointer;
+}
+
+.selectedRow {
+    background-color: lightgrey;
+}

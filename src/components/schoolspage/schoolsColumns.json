@@ -1,0 +1,46 @@
+[
+    {
+		"field": "name",
+		"caption": "בית ספר",
+        "type": "text"
+	},
+    {
+		"field": "level",
+		"caption": "שלב חינוך",
+        "type": "text"
+	},
+    {
+		"field": "sector",
+		"caption": "מגזר",
+        "type": "text"
+	},
+    {
+		"field": "schoolType",
+		"caption": "סוג",
+        "type": "text"
+	},
+    {
+		"field": "city",
+		"caption": "עיר",
+        "type": "text"
+	},
+    {
+		"field": "representative",
+		"caption": "נציג",
+        "type": "link",
+        "settings": {
+            "newTab": false
+        },
+		"editable": false
+	},
+    {
+		"field": "schoolDate",
+		"caption": "תאריך",
+        "type": "date"
+	},
+    {
+		"field": "status",
+		"caption": "סטטוס",
+        "type": "text"
+    }
+]
