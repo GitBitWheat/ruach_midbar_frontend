@@ -128,7 +128,15 @@ const PlansPage = () => {
 
     // Request the server to update the data source, proceed if request succeeded
     const handleRowInserting = useCallback(event => {
-        const planData = new Plan(event.data);
+        const school = storeLookupData.schools.get(event.data.schoolId);
+        const planData = new Plan({
+            ...event.data,
+            institution: school.name,
+            contact: school.representative,
+            city: school.city,
+            level: school.level,
+            sym: school.sym
+        });
         const isCanceled = new Promise(resolve => {
             storeMethods.addPlan(planData)
                 .then((validationResult) => {
@@ -139,7 +147,7 @@ const PlansPage = () => {
                 });
         });
         event.cancel = isCanceled;
-    }, [storeMethods, linkDSLst]);
+    }, [storeMethods, linkDSLst, storeLookupData]);
 
     const handleRowRemoving = useCallback(event => {
         const isCanceled = new Promise(resolve => {
@@ -155,7 +163,16 @@ const PlansPage = () => {
     }, [storeMethods, linkDSLst]);
 
     const handleRowUpdating = useCallback(event => {
-        const planData = new Plan({...event.oldData, ...event.newData});
+        const school = storeLookupData.schools.get(event.newData.schoolId || event.oldData.schoolId);
+        const planData = new Plan({
+            ...event.oldData,
+            ...event.newData,
+            institution: school.name,
+            contact: school.representative,
+            city: school.city,
+            level: school.level,
+            sym: school.sym
+        });
         const isCanceled = new Promise(resolve => {
             storeMethods.updatePlan(event.key, planData)
                 .then((validationResult) => {
@@ -166,7 +183,7 @@ const PlansPage = () => {
                 });
         });
         event.cancel = isCanceled;
-    }, [storeMethods, linkDSLst]);
+    }, [storeMethods, linkDSLst, storeLookupData]);
 
     // Using values from diffrent data fields for the schoolId column
     const schoolIdCellRender = useCallback(({ value }) => {
@@ -190,7 +207,10 @@ const PlansPage = () => {
     }, [yearFilteredPlansDS]);
     const [plansLookupDS, setPlansLookupDS] = useState([]);
     useEffect(() => {
-        setPlansLookupDS(uniques(yearFilteredPlansDS.map(plan => plan.plan).filter(val => val)));
+        setPlansLookupDS(
+            uniques(yearFilteredPlansDS.map(plan => plan.plan).filter(val => val))
+            .map(plan => ({ value: plan, display: plan.split('#')[0] }))
+        );
     }, [yearFilteredPlansDS]);
 
     const [schoolLevelHeaderFilterDS, schoolLevelCalculateFilterExpr] =
@@ -434,15 +454,6 @@ const PlansPage = () => {
                         displayExpr='city'
                     />
                 </Column>
-                {/*<Column
-                    dataField='contact'
-                    dataType='string'
-                    caption={pageText.contact}
-                    cellRender={WhatsappCell}
-                    editCellComponent={WhatsappEditCell}
-                >
-                    <HeaderFilter dataSource={contactLinkDS.dataSource} />
-                </Column>*/}
                 <Column
                     name='schoolRep'
                     dataField='schoolId'
@@ -493,6 +504,8 @@ const PlansPage = () => {
                             paginate: true,
                             pageSize: settingsConstants.columnLookupPageSize
                         }}
+                        valueExpr='value'
+                        displayExpr='display'
                     />
                 </Column>
                 <Column
