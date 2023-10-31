@@ -7,7 +7,7 @@ import pageText from './useclearfiltersbuttontext.json';
 const useClearFiltersButton = dgRef => {
     const clearFilter = useCallback(() => {
         if (dgRef && dgRef.current) {
-            /** @type {import('devextreme-react').DataGrid} */
+            /**  {import('devextreme-react').DataGrid} */
             const dg = dgRef.current;
 
             dg.instance.clearFilter();

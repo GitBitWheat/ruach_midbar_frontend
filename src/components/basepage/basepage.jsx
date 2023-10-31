@@ -9,7 +9,6 @@ import SchoolsPage from '../schoolspage/schoolpage';
 import ContactsPage from '../contactspage/contactspage';
 import PlansPage from '../planspage/planspage'
 import PlacementsPage from '../placementspage/placementspage';
-import PlacementsPage2 from '../placementspage2/placementspage2';
 import InstructorsPage from '../instructorspage/instructorspage';
 import PaymentsPage from '../paymentspage/paymentspage';
 import SettingsPage from '../settingspage/settingspage';
@@ -24,7 +23,6 @@ const Pages = Object.freeze({
     SCHOOLS_PAGE: 'SchoolsPage',
     CONTACTS_PAGE: 'ContactsPage',
     PLACEMENTS_PAGE: 'PlacementsPage',
-    PLACEMENTS_PAGE_2: 'PlacementsPage2',
     PLANS_PAGE: 'PlansPage',
     INSTRUCTORS_PAGE: 'InstructorsPage',
     PAYMENTS_PAGE: 'PaymentsPage',
@@ -46,8 +44,6 @@ const renderPage = (page, setPage) => {
         return (<PlansPage />);
     } else if (page === Pages.PLACEMENTS_PAGE) {
         return (<PlacementsPage />);
-    } else if (page === Pages.PLACEMENTS_PAGE_2) {
-        return (<PlacementsPage2 />);
     } else if (page === Pages.INSTRUCTORS_PAGE) {
         return (<InstructorsPage />);
     } else if (page === Pages.PAYMENTS_PAGE) {
@@ -72,72 +68,65 @@ const BasePage = () => {
         setPage(newPage);
     }, []);
 
-    return (
-        <>
-            <Navbar bg="dark" variant="dark" expand="lg">
-                <Container>
-                    <Navbar.Brand>{pageText.interface}</Navbar.Brand>
-                </Container>
-                <Navbar.Collapse style={{width: '-moz-available'}}>
-                  <Nav className="me-auto">
-                    <Nav.Link onClick={() => {handlePageChange(Pages.SCHOOLS_PAGE)}}>
-                        <span className={page === Pages.SCHOOLS_PAGE ? 'navbarSelectedOption' : ''}>
-                            {pageText.schoolsPage}
-                        </span>
-                    </Nav.Link>
-                    <Nav.Link onClick={() => {handlePageChange(Pages.MESSAGES_FORM)}}>
-                        <span className={page === Pages.MESSAGES_FORM ? 'navbarSelectedOption' : ''}>
-                            {pageText.messagesForm}
-                        </span>
-                    </Nav.Link>
-                    <Nav.Link onClick={() => {handlePageChange(Pages.PLANS_PAGE)}}>
-                        <span className={page === Pages.PLANS_PAGE ? 'navbarSelectedOption' : ''}>
-                            {pageText.plansPage}
-                        </span>
-                    </Nav.Link>
-                    <Nav.Link onClick={() => {handlePageChange(Pages.PLACEMENTS_PAGE)}}>
-                        <span className={page === Pages.PLACEMENTS_PAGE ? 'navbarSelectedOption' : ''}>
-                            {pageText.placementsPage}
-                        </span>
-                    </Nav.Link>
-                    <Nav.Link onClick={() => {handlePageChange(Pages.PLACEMENTS_PAGE_2)}}>
-                        <span className={page === Pages.PLACEMENTS_PAGE_2 ? 'navbarSelectedOption' : ''}>
-                            {pageText.placementsPage + ' 2'}
-                        </span>
-                    </Nav.Link>
-                    <Nav.Link onClick={() => {handlePageChange(Pages.INSTRUCTORS_PAGE)}}>
-                        <span className={page === Pages.INSTRUCTORS_PAGE ? 'navbarSelectedOption' : ''}>
-                            {pageText.instructorUploadsPage}
-                        </span>
-                    </Nav.Link>
-                    <Nav.Link onClick={() => {handlePageChange(Pages.PAYMENTS_PAGE)}}>
-                        <span className={page === Pages.PAYMENTS_PAGE ? 'navbarSelectedOption' : ''}>
-                            {pageText.paymentsPage}
-                        </span>
-                    </Nav.Link>
-                    <Nav.Link onClick={() => {handlePageChange(Pages.CONTACTS_PAGE)}}>
-                        <span className={page === Pages.CONTACTS_PAGE ? 'navbarSelectedOption' : ''}>
-                            {pageText.contactsPage}
-                        </span>
-                    </Nav.Link>
-                    <Nav.Link onClick={() => {handlePageChange(Pages.STATUS_TABLES)}}>
-                        <span className={page === Pages.STATUS_TABLES ? 'navbarSelectedOption' : ''}>
-                            {pageText.statusTables}
-                        </span>
-                    </Nav.Link>
-                    <Nav.Link onClick={() => {handlePageChange(Pages.SETTINGS_PAGE)}}>
-                        <span className={page === Pages.SETTINGS_PAGE ? 'navbarSelectedOption' : ''}>
-                            {pageText.settingsPage}
-                        </span>
-                    </Nav.Link>
-                  </Nav>
-                </Navbar.Collapse>
-            </Navbar>
-            <div id='basepage'>
-                {renderPage(page, setPage)}
-            </div>
-        </>
-    );
+    return <>
+        <Navbar bg="dark" variant="dark" expand="lg">
+            <Container>
+                <Navbar.Brand>{pageText.interface}</Navbar.Brand>
+            </Container>
+            <Navbar.Collapse style={{width: '-moz-available'}}>
+              <Nav className="me-auto">
+                <Nav.Link onClick={() => {handlePageChange(Pages.SCHOOLS_PAGE)}}>
+                    <span className={page === Pages.SCHOOLS_PAGE ? 'navbarSelectedOption' : ''}>
+                        {pageText.schoolsPage}
+                    </span>
+                </Nav.Link>
+                <Nav.Link onClick={() => {handlePageChange(Pages.MESSAGES_FORM)}}>
+                    <span className={page === Pages.MESSAGES_FORM ? 'navbarSelectedOption' : ''}>
+                        {pageText.messagesForm}
+                    </span>
+                </Nav.Link>
+                <Nav.Link onClick={() => {handlePageChange(Pages.PLANS_PAGE)}}>
+                    <span className={page === Pages.PLANS_PAGE ? 'navbarSelectedOption' : ''}>
+                        {pageText.plansPage}
+                    </span>
+                </Nav.Link>
+                <Nav.Link onClick={() => {handlePageChange(Pages.PLACEMENTS_PAGE)}}>
+                    <span className={page === Pages.PLACEMENTS_PAGE ? 'navbarSelectedOption' : ''}>
+                        {pageText.placementsPage}
+                    </span>
+                </Nav.Link>
+                <Nav.Link onClick={() => {handlePageChange(Pages.INSTRUCTORS_PAGE)}}>
+                    <span className={page === Pages.INSTRUCTORS_PAGE ? 'navbarSelectedOption' : ''}>
+                        {pageText.instructorUploadsPage}
+                    </span>
+                </Nav.Link>
+                <Nav.Link onClick={() => {handlePageChange(Pages.PAYMENTS_PAGE)}}>
+                    <span className={page === Pages.PAYMENTS_PAGE ? 'navbarSelectedOption' : ''}>
+                        {pageText.paymentsPage}
+                    </span>
+                </Nav.Link>
+                <Nav.Link onClick={() => {handlePageChange(Pages.CONTACTS_PAGE)}}>
+                    <span className={page === Pages.CONTACTS_PAGE ? 'navbarSelectedOption' : ''}>
+                        {pageText.contactsPage}
+                    </span>
+                </Nav.Link>
+                <Nav.Link onClick={() => {handlePageChange(Pages.STATUS_TABLES)}}>
+                    <span className={page === Pages.STATUS_TABLES ? 'navbarSelectedOption' : ''}>
+                        {pageText.statusTables}
+                    </span>
+                </Nav.Link>
+                <Nav.Link onClick={() => {handlePageChange(Pages.SETTINGS_PAGE)}}>
+                    <span className={page === Pages.SETTINGS_PAGE ? 'navbarSelectedOption' : ''}>
+                        {pageText.settingsPage}
+                    </span>
+                </Nav.Link>
+              </Nav>
+            </Navbar.Collapse>
+        </Navbar>
+        <div id='basepage'>
+            {renderPage(page, setPage)}
+        </div>
+    </>;
 };
 
 export { Pages };
