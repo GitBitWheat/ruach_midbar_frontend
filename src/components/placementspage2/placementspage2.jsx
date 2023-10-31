@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, useCallback } from "react";
 import { DataGrid, HeaderFilter, Column, ColumnChooser, ColumnFixing, StateStoring, Editing }
     from 'devextreme-react/data-grid';
-import { Form, Button } from "react-bootstrap";
+import { Button, TextArea } from "devextreme-react";
 
 import WhatsappCell from "../customcells/whatsappcell/whatsappcell";
 import LinkCell from "../customcells/linkcell/linkcell";
@@ -17,8 +17,6 @@ import { uniques } from "../../utils/arrayUtils";
 import settingsConstants from '../../utils/settingsconstants.json';
 import pageText from './placementspage2text.json';
 import './placementspage2.css';
-
-
 
 /**
  * Calculate the instructor data sources (the options and the placed candidates)
@@ -51,8 +49,6 @@ const calculateDataSources = (selectedPlan, instructors, instructorPlacements) =
     }
 };
 
-
-
 const areasHeaderFilterDS = areas.map(area => ({
     text: area.text,
     value: ['area', 'contains', area.value]
@@ -65,8 +61,6 @@ const preparePlan = plan => (
         .filter(instructor => instructor)
     })
 );
-
-
 
 const PlacementsPage2 = () => {
 
@@ -143,7 +137,7 @@ const PlacementsPage2 = () => {
         storeMethods.updatePlanMessage(selectedPlan.id, msg);
     }, [storeMethods, selectedPlan, msg]);
 
-    const instructorColumns = [
+    const instructorColumns = () => [
         <Column
             key="dist"
             dataType="number"
@@ -208,6 +202,72 @@ const PlacementsPage2 = () => {
         InstructorTypesColumn('instructorTypes', {allowEditing: false}),
     ];
 
+    /** Selected plan button functionalities */
+
+    const sendMessagesToInstructors = useCallback(_event => {
+        const filteredPlacedInstructors = candidatesDS.filter(cand => cand.action);
+        messagesRequest(msg, '', '', filteredPlacedInstructors.map(placedInstructor => placedInstructor.firstName.split('#')[1]),
+        filteredPlacedInstructors.map(placedInstructor => placedInstructor.firstName.split('#')[0]), '', null,
+        null, null, () => {});
+                
+        // Updating colors in the database
+        /*
+        for (const placedInstructor of candidatesDS) {
+            if (placedInstructor.action) {
+                if (placedInstructor.id in instructorToColorId) {
+                    ctxMethods.updateInstructorPlanColor(placedInstructor.id, selectedPlanId, placedColorDefault);
+                } else {
+                    ctxMethods.addInstructorPlanColor(placedInstructor.id, selectedPlanId, placedColorDefault);
+                }
+            }
+        }
+        */
+    }, [msg, candidatesDS]);
+
+    const placeCandidates = useCallback(_event => {
+        const instructorsLen = selectedPlan.instructors.length;
+
+        if (instructorsLen >= 4) {
+            alert(pageText.planIsFull);
+            return;
+        }
+
+        const instructorSlotsNum = 4;
+        const emptySlotsNum = instructorSlotsNum - instructorsLen;
+
+        const newInstructors = candidatesDS
+            .filter(pi => pi.action)
+            .map(pi => pi.firstName || '')
+
+        if (newInstructors.length > emptySlotsNum) {
+            alert(pageText.choseMoreCandidatesThanEmptySlots);
+            return;
+        }
+        else if (newInstructors.length === 0) {
+            alert(pageText.noChosenCandidates);
+            return;
+        }
+
+        storeMethods.placeCandidates(selectedPlan.id, newInstructors, instructorsLen + 1);
+    }, [candidatesDS, selectedPlan, storeMethods]);
+
+    const cancelPlacement1 = useCallback(
+        _event => storeMethods.cancelCandidatePlacement(selectedPlan.id, 1),
+        [selectedPlan, storeMethods]
+    );
+    const cancelPlacement2 = useCallback(
+        _event => storeMethods.cancelCandidatePlacement(selectedPlan.id, 2),
+        [selectedPlan, storeMethods]
+    );
+    const cancelPlacement3 = useCallback(
+        _event => storeMethods.cancelCandidatePlacement(selectedPlan.id, 3),
+        [selectedPlan, storeMethods]
+    );
+    const cancelPlacement4 = useCallback(
+        _event => storeMethods.cancelCandidatePlacement(selectedPlan.id, 4),
+        [selectedPlan, storeMethods]
+    );
+
     return (
         <div>
             <div className="placementsPageRow">
@@ -221,96 +281,59 @@ const PlacementsPage2 = () => {
                         selectedPlanStatus={selectedPlan ? selectedPlan.status : null}
                         setNewPlan={handlePlanChange}
                     />
-                    {selectedPlan && <>
-                        <Form.Group controlId="formMsgText">
-                            <Form.Label>{pageText.msgTextLabel}</Form.Label>
-                            <Form.Control
-                                as="textarea"
-                                rows={5}
-                                value={msg}
-                                onChange={e => { setMsg(e.target.value) }}
-                            />
-                        </Form.Group>
-                        <div className="flex-row">
-                            <Button
-                                variant="warning"
-                                onClick={() => {
-                                    const filteredPlacedInstructors = candidatesDS.filter(cand => cand.action);
-                                    messagesRequest(msg, '', '', filteredPlacedInstructors.map(placedInstructor => placedInstructor.firstName.split('#')[1]),
-                                    filteredPlacedInstructors.map(placedInstructor => placedInstructor.firstName.split('#')[0]), '', null,
-                                    null, null, () => {});
-                
-                                    // Updating colors in the database
-                                    /*
-                                    for (const placedInstructor of candidatesDS) {
-                                        if (placedInstructor.action) {
-                                            if (placedInstructor.id in instructorToColorId) {
-                                                ctxMethods.updateInstructorPlanColor(placedInstructor.id, selectedPlanId, placedColorDefault);
-                                            } else {
-                                                ctxMethods.addInstructorPlanColor(placedInstructor.id, selectedPlanId, placedColorDefault);
-                                            }
-                                        }
-                                    }
-                                    */
-                                }}>
-                                {pageText.sendMessagesToInstructors}
-                            </Button>
-
-                            <Button
-                                variant="warning"
-                                onClick={updatePlanMsg}>
-                                {pageText.saveMsg}
-                            </Button>
-
-                            <Button
-                                variant="warning"
-                                onClick={() => {
-                                    const instructorsLen = selectedPlan.instructors.length;
-
-                                    if (instructorsLen >= 4) {
-                                        alert(pageText.planIsFull);
-                                        return;
-                                    }
-
-                                    const instructorSlotsNum = 4;
-                                    const emptySlotsNum = instructorSlotsNum - instructorsLen;
-
-                                    const newInstructors = candidatesDS
-                                        .filter(pi => pi.action)
-                                        .map(pi => pi.firstName || '')
-
-                                    if (newInstructors.length > emptySlotsNum) {
-                                        alert(pageText.choseMoreCandidatesThanEmptySlots);
-                                        return;
-                                    }
-                                    else if (newInstructors.length === 0) {
-                                        alert(pageText.noChosenCandidates);
-                                        return;
-                                    }
-
-                                    storeMethods.placeCandidates(selectedPlan.id, newInstructors, instructorsLen + 1);
-                                }}
-                            >
-                                {pageText.placeCandidate}
-                            </Button>
-
+                    <TextArea
+                        height={125}
+                        value={msg}
+                        onChange={e => { setMsg(e.target.value) }}
+                        disabled={!(!!selectedPlan)}
+                    />
+                    <div className="flex-row">
+                        <Button
+                            text={pageText.sendMessagesToInstructors}
+                            icon="bi bi-send"
+                            onClick={sendMessagesToInstructors}
+                            disabled={!(!!selectedPlan)}
+                        />
+                        <Button
+                            text={pageText.saveMsg}
+                            icon="bi bi-floppy"
+                            onClick={updatePlanMsg}
+                            disabled={!(!!selectedPlan)}
+                        />
+                        <Button
+                            text={pageText.placeCandidates}
+                            icon="bi bi-plus-lg"
+                            onClick={placeCandidates}
+                            disabled={!(!!selectedPlan)}
+                        />
+                        <span
+                            className={selectedPlan ? "" : "dx-state-disabled dx-widget"}
+                        >
                             {pageText.unplacePlanInstructor}
-                            <span className="smallGapRow">
-                                <Button variant="info" onClick={() => storeMethods.cancelCandidatePlacement(selectedPlan.id, 1)}>
-                                    1
-                                </Button>
-                                <Button variant="info" onClick={() => storeMethods.cancelCandidatePlacement(selectedPlan.id, 2)}>
-                                    2
-                                </Button>
-                                <Button variant="info" onClick={() => storeMethods.cancelCandidatePlacement(selectedPlan.id, 3)}>
-                                    3
-                                </Button>
-                                <Button variant="info" onClick={() => storeMethods.cancelCandidatePlacement(selectedPlan.id, 4)}>
-                                    4
-                                </Button>
-                            </span>
-                        </div>
-                    </>}
+                        </span>
+                        <span className="smallGapRow">
+                            <Button
+                                text="1"
+                                onClick={cancelPlacement1}
+                                disabled={!(!!selectedPlan)}
+                            />
+                            <Button
+                                text="2"
+                                onClick={cancelPlacement2}
+                                disabled={!(!!selectedPlan)}
+                            />
+                            <Button
+                                text="3"
+                                onClick={cancelPlacement3}
+                                disabled={!(!!selectedPlan)}
+                            />
+                            <Button
+                                text="4"
+                                onClick={cancelPlacement4}
+                                disabled={!(!!selectedPlan)}
+                            />
+                        </span>
+                    </div>
                 </div>
             </div>
             <div className="placementsPageRow">
@@ -333,8 +356,7 @@ const PlacementsPage2 = () => {
                             type='localStorage'
                             storageKey='placementsOptionsDataGridStateStoring'
                         />
-
-                        {instructorColumns}
+                        {instructorColumns()}
                     </DataGrid>
                 </div>
                 <div className="placementsTableContainer">
@@ -370,14 +392,12 @@ const PlacementsPage2 = () => {
                             allowSorting={false}
                             allowFiltering={false}
                         />
-                        {instructorColumns}
+                        {instructorColumns()}
                     </DataGrid>
                 </div>
             </div>
         </div>
     );
 };
-
-
 
 export default PlacementsPage2;

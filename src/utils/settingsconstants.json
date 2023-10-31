@@ -10,5 +10,8 @@
         "columnResizingMode": "widget",
         "allowColumnResizing": true,
         "allowColumnReordering": true
+    },
+    "buttonDefaultProps": {
+        "rtlEnabled": true
     }
 }

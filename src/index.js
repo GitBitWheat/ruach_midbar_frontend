@@ -4,8 +4,9 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
-//Bootstrap
+//Bootstrap and bootstrap icons
 import 'bootstrap/dist/css/bootstrap.min.css';
+import "bootstrap-icons/font/bootstrap-icons.css";
 
 //For RTL support
 import ThemeProvider from 'react-bootstrap/esm/ThemeProvider';

@@ -15,7 +15,8 @@
 
     "sendMessagesToInstructors": "שלח הודעות למדריכים",
     "saveMsg": "שמור נוסח",
-    "placeCandidate": "שבץ מועמד",
+    "placeCandidates": "שבץ מועמדים",
+    "unplacePlanInstructor": "בטל את שיבוץ מועמד:",
 
     "planIsFull": "כל מקומות המדריכים של התוכנית מלאים",
     "choseMoreCandidatesThanEmptySlots": "בחרת יותר מועמדים משיש מקומות לשיבוץ",

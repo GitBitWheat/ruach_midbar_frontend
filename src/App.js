@@ -4,9 +4,11 @@ import SchoolsContextProvider from './store/SchoolsContextProvider';
 import { SettingsContextProvider } from './components/settingscontext/settingscontext';
 import settingsConstants from './utils/settingsconstants.json';
 import dxDataGrid from 'devextreme/ui/data_grid';
+import dxButton from 'devextreme/ui/button';
 import BasePage from './components/basepage/basepage';
 
 dxDataGrid.defaultOptions({ options: settingsConstants.dataGridDefaultProps });
+dxButton.defaultOptions({ options: settingsConstants.buttonDefaultProps });
 
 function App() {
     return (
