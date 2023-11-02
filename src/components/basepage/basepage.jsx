@@ -8,6 +8,7 @@ import StatusTablesPage from '../statustablespage/statustablespage';
 import SchoolsPage from '../schoolspage/schoolpage';
 import ContactsPage from '../contactspage/contactspage';
 import PlansPage from '../planspage/planspage'
+import PlacementsPageOld from '../placementspageold/placementspage';
 import PlacementsPage from '../placementspage/placementspage';
 import InstructorsPage from '../instructorspage/instructorspage';
 import PaymentsPage from '../paymentspage/paymentspage';
@@ -22,6 +23,7 @@ const Pages = Object.freeze({
     STATUS_TABLES: 'StatusTables',
     SCHOOLS_PAGE: 'SchoolsPage',
     CONTACTS_PAGE: 'ContactsPage',
+    PLACEMENTS_PAGE_OLD: 'PlacementsPageOld',
     PLACEMENTS_PAGE: 'PlacementsPage',
     PLANS_PAGE: 'PlansPage',
     INSTRUCTORS_PAGE: 'InstructorsPage',
@@ -42,6 +44,8 @@ const renderPage = (page, setPage) => {
         return (<ContactsPage />);
     } else if (page === Pages.PLANS_PAGE) {
         return (<PlansPage />);
+    } else if (page === Pages.PLACEMENTS_PAGE_OLD) {
+        return (<PlacementsPageOld />);
     } else if (page === Pages.PLACEMENTS_PAGE) {
         return (<PlacementsPage />);
     } else if (page === Pages.INSTRUCTORS_PAGE) {
@@ -88,6 +92,11 @@ const BasePage = () => {
                 <Nav.Link onClick={() => {handlePageChange(Pages.PLANS_PAGE)}}>
                     <span className={page === Pages.PLANS_PAGE ? 'navbarSelectedOption' : ''}>
                         {pageText.plansPage}
+                    </span>
+                </Nav.Link>
+                <Nav.Link onClick={() => {handlePageChange(Pages.PLACEMENTS_PAGE_OLD)}}>
+                    <span className={page === Pages.PLACEMENTS_PAGE_OLD ? 'navbarSelectedOption' : ''}>
+                        {pageText.placementsPage} - ישן
                     </span>
                 </Nav.Link>
                 <Nav.Link onClick={() => {handlePageChange(Pages.PLACEMENTS_PAGE)}}>
