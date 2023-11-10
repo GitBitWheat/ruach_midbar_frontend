@@ -15,7 +15,7 @@ import { getDistanceRequest, messagesRequest } from "../../utils/localServerRequ
 import { symmDiff, uniques } from "../../utils/arrayUtils";
 
 import useColors from "./usecolors";
-import ButtonFilters, { ButtonFiltersControls } from "./optionsfilters/buttonfilters";
+import ButtonFilters from "./optionsfilters/buttonfilters";
 import useOptionsFilters from "./optionsfilters/useoptionsfilters";
 
 import settingsConstants from '../../utils/settingsconstants.json';
@@ -83,7 +83,7 @@ const [saveCandidatesDataGridState, loadCandidatesDataGridState] = noFilterValue
 /**
  * Update DataGrid filters according to the button filters controls
  * @param {import("react").RefObject} dgRef 
- * @param {ButtonFiltersControls} btnFltrs 
+ * @param {Object} btnFltrs 
  * @param {String} dataField 
  */
 const updateDGFltrs = (dgRef, btnFltrs, dataField) => {
@@ -118,7 +118,7 @@ const updateDGFltrs = (dgRef, btnFltrs, dataField) => {
  * Update button filters according to the datagrid filterValues
  * @param {import('devextreme/ui/data_grid').OptionChangedEvent} event 
  * @param {Number} colIdx 
- * @param {ButtonFiltersControls} btnCtrls 
+ * @param {import('./optionsfilters/buttonfilters').ButtonFiltersControls} btnCtrls 
  */
 const updateBtnFltrs = (event, colIdx, btnCtrls) => {
     if (event.fullName === `columns[${colIdx}].filterValues`) {
