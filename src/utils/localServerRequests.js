@@ -458,10 +458,9 @@ export async function listInstructorFiles(area, city, name, dirNames) {
     }
 }
 
-export async function getDistanceRequest(origin, destinations) {
+export async function getDistanceRequest(origin) {
     const data = {
         origin: origin,
-        destinations: destinations
     };
     const serializedData = JSON.stringify(data);
     const config = {

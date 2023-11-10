@@ -12,7 +12,9 @@ import PlanMenu from "../planmenu/planmenu";
 import { SchoolsContext } from "../../store/SchoolsContextProvider";
 import areas from '../../static/instructor_areas.json';
 import { getDistanceRequest, messagesRequest } from "../../utils/localServerRequests";
-import { symmDiff, uniques } from "../../utils/arrayUtils";
+import { symmDiff } from "../../utils/arrayUtils";
+import { dataGridRowLongClick } from "../../utils/datagridrowlongclick";
+import { dataGridRightOnContentReady } from "../../utils/datagridrightoncontentready";
 
 import useColors from "./usecolors";
 import ButtonFilters from "./optionsfilters/buttonfilters";
@@ -185,21 +187,23 @@ const PlacementsPage = () => {
         useColors(selectedPlanId, candidatesDS);
 
     // Handlers of turning instructors to candidates and options - datagrid on row click event handlers
-    const turnToCandidate = useCallback(params => {
+    const turnToCandidate = useCallback(data => {
         const aip = storeMethods.addInstructorPlacement;
-        aip(params.data.id, selectedPlan.id);
+        aip(data.id, selectedPlan.id);
 
         // After turning an instructor to a candidate, delete their color
-        deleteColor(params.data.id);
+        deleteColor(data.id);
     }, [selectedPlan, storeMethods.addInstructorPlacement, deleteColor]);
+    const optionsRowPreparedHandler = dataGridRowLongClick(turnToCandidate);
 
-    const turnToOptional = useCallback(params => {
+    const turnToOptional = useCallback(data => {
         const dip = storeMethods.deleteInstructorPlacement;
-        dip(params.data.id, selectedPlan.id);
+        dip(data.id, selectedPlan.id);
 
         // After turning an instructor to optional, give them the default option color
-        optionSwitchColorToDefault(params.data.id);
+        optionSwitchColorToDefault(data.id);
     }, [selectedPlan, storeMethods.deleteInstructorPlacement, optionSwitchColorToDefault]);
+    const candidatesRowPreparedHandler = dataGridRowLongClick(turnToOptional);
 
     // Distances object
     const [dists, setDists] = useState({});
@@ -207,8 +211,7 @@ const PlacementsPage = () => {
         (async () => {
             setDists(selectedPlan && selectedPlan.city ?
                 await getDistanceRequest(
-                    selectedPlan.city,
-                    uniques(storeData.instructors.map(inst => inst.city))
+                    selectedPlan.city
                 )
             : {});
         })();
@@ -444,8 +447,9 @@ const PlacementsPage = () => {
                         dataSource={optionsDS}
                         keyExpr='id'
                         hoverStateEnabled={true}
-                        onRowClick={turnToCandidate}
+                        onRowPrepared={optionsRowPreparedHandler}
                         onOptionChanged={optionsOptionChangedHandler}
+                        onContentReady={dataGridRightOnContentReady}
                     >
                         <HeaderFilter
                             visible={true}
@@ -474,7 +478,8 @@ const PlacementsPage = () => {
                         dataSource={candidatesDS}
                         keyExpr='id'
                         hoverStateEnabled={true}
-                        onRowClick={turnToOptional}
+                        onRowPrepared={candidatesRowPreparedHandler}
+                        onContentReady={dataGridRightOnContentReady}
                     >
                         <HeaderFilter
                             visible={true}
