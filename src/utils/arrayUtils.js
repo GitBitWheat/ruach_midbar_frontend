@@ -1,8 +1,6 @@
 import { caseInsensitiveCompare } from "./stringutils";
 
-
-
-function pushSetter(array, setter) {
+export function pushSetter(array, setter) {
     return newValue => {
         const arrayCopy = [...array];
         arrayCopy.push(newValue);
@@ -10,10 +8,8 @@ function pushSetter(array, setter) {
     }
 }
 
-
-
 // Sorts an array of either strings or integers. null values are allowed
-function generalCaseInsensitiveSort(valueExtracter) {
+export function generalCaseInsensitiveSort(valueExtracter) {
     return (elem1, elem2) => {
         const val1 = valueExtracter(elem1);
         const val2 = valueExtracter(elem2);
@@ -35,15 +31,15 @@ function generalCaseInsensitiveSort(valueExtracter) {
 }
 
 // Same array without duplicate values
-function uniques(array) {
+export function uniques(array) {
     return [...new Set(array)];
 }
 
-function sum(array) {
+export function sum(array) {
     return array.reduce((accumulator, currentValue) => accumulator + currentValue, 0);
 }
 
-function* range(start, stop, step = 1) {
+export function* range(start, stop, step = 1) {
     if (!stop) {
         // one param defined
         stop = start;
@@ -55,4 +51,12 @@ function* range(start, stop, step = 1) {
     }
 }
 
-export { pushSetter, generalCaseInsensitiveSort, uniques, sum, range };
+/**
+ * Symmetric difference between two arrays.
+ * @param {Array} arr1 
+ * @param {Array} arr2 
+ * @return {Array}
+ */
+export const symmDiff = (arr1, arr2) =>
+    arr1.filter(val => !arr2.includes(val))
+    .concat(arr2.filter(val => !arr1.includes(val)));

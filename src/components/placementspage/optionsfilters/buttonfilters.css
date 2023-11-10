@@ -1,0 +1,15 @@
+.buttonsContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    padding-bottom: 5px;
+    margin-right: 5px;
+}
+
+.buttonsContainer button {
+    margin-left: 5px;
+    margin-top: 2px;
+    padding-left: 1px;
+    padding: 2px 2px 2px 2px;
+}

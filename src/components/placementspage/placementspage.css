@@ -1,10 +1,17 @@
+.placementsPageContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
 .placementsPageRow {
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
-    gap: 1vw;
-    padding-left: 1vw;
-    padding-right: 1vw;
+    gap: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .placementsTableContainer {

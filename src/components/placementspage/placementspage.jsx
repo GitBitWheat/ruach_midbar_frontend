@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useCallback } from "react";
+import { useState, useEffect, useContext, useCallback, useRef } from "react";
 import { DataGrid, HeaderFilter, Column, ColumnChooser, ColumnFixing, StateStoring, Editing }
     from 'devextreme-react/data-grid';
 import { Button, TextArea } from "devextreme-react";
@@ -12,9 +12,11 @@ import PlanMenu from "../planmenu/planmenu";
 import { SchoolsContext } from "../../store/SchoolsContextProvider";
 import areas from '../../static/instructor_areas.json';
 import { getDistanceRequest, messagesRequest } from "../../utils/localServerRequests";
-import { uniques } from "../../utils/arrayUtils";
+import { symmDiff, uniques } from "../../utils/arrayUtils";
 
 import useColors from "./usecolors";
+import ButtonFilters, { ButtonFiltersControls } from "./optionsfilters/buttonfilters";
+import useOptionsFilters from "./optionsfilters/useoptionsfilters";
 
 import settingsConstants from '../../utils/settingsconstants.json';
 import pageText from './placementspagetext.json';
@@ -25,7 +27,6 @@ import './placementspage.css';
  * @param {Plan} selectedPlan 
  * @param {Array} instructors 
  * @param {Array} instructorPlacements 
- * @returns 
  */
 const calculateDataSources = (selectedPlan, instructors, instructorPlacements) => {
     if (selectedPlan) {
@@ -63,6 +64,83 @@ const preparePlan = plan => (
         .filter(instructor => instructor)
     })
 );
+
+// State storing of the data grids - don't save filter values
+const noFilterValuesStateHandle = storageKey => [
+    state => {
+        state.columns
+        .forEach(col => { delete col.filterValues; });
+        localStorage.setItem(storageKey, JSON.stringify(state));
+    }, () => {
+        return JSON.parse(localStorage.getItem(storageKey));
+    }
+];
+const optionsStorageKey = 'optionsDataGridStateStoring';
+const candidatesStorageKey = 'candidatesDataGridStateStoring';
+const [saveOptionsDataGridState, loadOptionsDataGridState] = noFilterValuesStateHandle(optionsStorageKey);
+const [saveCandidatesDataGridState, loadCandidatesDataGridState] = noFilterValuesStateHandle(candidatesStorageKey);
+
+/**
+ * Update DataGrid filters according to the button filters controls
+ * @param {import("react").RefObject} dgRef 
+ * @param {ButtonFiltersControls} btnFltrs 
+ * @param {String} dataField 
+ */
+const updateDGFltrs = (dgRef, btnFltrs, dataField) => {
+    if (dgRef && dgRef.current) {
+        /** @type {DataGrid} */
+        const dg = dgRef.current;
+    
+        // If the filterValues already match the button filters - do not update them.
+        // It is possible the filterValues were updated via the datagrid menu, and as
+        // a result this function called was by a useEffect. Prevent an infinite loop.
+        const gridFltrExprs = dg.instance.columnOption(dataField, 'filterValues') || [];
+        const gridEnabledFltrs =
+            (gridFltrExprs.length && !Array.isArray(gridFltrExprs)) ?
+            gridFltrExprs[2] : gridFltrExprs.map(fltrExpr => fltrExpr[2]);
+        const fltrsCp = {...btnFltrs};
+        for (const fltr of gridEnabledFltrs) {
+            delete fltrsCp[fltr];
+        }
+        if (gridEnabledFltrs.every(fltr => btnFltrs[fltr]) &&
+            Object.values(fltrsCp).every(active => !active)) {
+            return;
+        }
+    
+        const filterValues = Object.entries(btnFltrs)
+            .filter(([_value, active]) => active)
+            .map(([value, _active]) => [dataField, 'contains', value]);
+        dg.instance.columnOption(dataField, 'filterValues', filterValues);
+    }
+};
+
+/**
+ * Update button filters according to the datagrid filterValues
+ * @param {import('devextreme/ui/data_grid').OptionChangedEvent} event 
+ * @param {Number} colIdx 
+ * @param {ButtonFiltersControls} btnCtrls 
+ */
+const updateBtnFltrs = (event, colIdx, btnCtrls) => {
+    if (event.fullName === `columns[${colIdx}].filterValues`) {
+        let value = event.value || [];
+        // If only a single filter has been selected, the filter values
+        // array will be its filter expression, instead of a combination
+        if (value.length && !Array.isArray(value[0])) {
+            value = [value];
+        }
+        // Turning filter expressions to values
+        value = value.map(fltrExpr => fltrExpr[2]);
+
+        btnCtrls.boolSwitch(
+            symmDiff(
+                value,
+                Object.entries(btnCtrls.fltrs)
+                .filter(([_value, active]) => active)
+                .map(([value, _active]) => value)
+            )
+        );
+    }
+};
 
 const PlacementsPage = () => {
 
@@ -175,7 +253,7 @@ const PlacementsPage = () => {
 
         const newInstructors = candidatesDS
             .filter(pi => pi.action)
-            .map(pi => pi.firstName || '')
+            .map(pi => (pi.firstName || '') + (pi.lastName ? ' ' + pi.lastName : ''))
 
         if (newInstructors.length > emptySlotsNum) {
             alert(pageText.choseMoreCandidatesThanEmptySlots);
@@ -205,6 +283,24 @@ const PlacementsPage = () => {
         _event => storeMethods.cancelCandidatePlacement(selectedPlan.id, 4),
         [selectedPlan, storeMethods]
     );
+
+    /* Button filters for the options table */
+    const [areaFltrsCtrls, typeFltrsCtrls] = useOptionsFilters();
+    const optionsDataGridRef = useRef();
+
+    useEffect(() => {
+        updateDGFltrs(optionsDataGridRef, areaFltrsCtrls.fltrs, 'area');
+    }, [areaFltrsCtrls.fltrs, optionsDataGridRef]);
+
+    useEffect(() => {
+        updateDGFltrs(optionsDataGridRef, typeFltrsCtrls.fltrs, 'instructorTypes');
+    }, [typeFltrsCtrls.fltrs, optionsDataGridRef]);
+
+    // On options datagrid filterValues change, update button controls
+    const optionsOptionChangedHandler = useCallback(event => {
+        updateBtnFltrs(event, 6, areaFltrsCtrls);
+        updateBtnFltrs(event, 9, typeFltrsCtrls);
+    }, [areaFltrsCtrls, typeFltrsCtrls]);
 
     const instructorColumns = () => [
         <Column
@@ -272,7 +368,7 @@ const PlacementsPage = () => {
     ];
 
     return (
-        <div>
+        <div className="placementsPageContainer">
             <div className="placementsPageRow">
                 <div id="planCardContainer">
                     <PlanCard planId={(selectedPlan && selectedPlan.id) || null} />
@@ -337,13 +433,19 @@ const PlacementsPage = () => {
                     </div>
                 </div>
             </div>
+
+            <ButtonFilters controls={areaFltrsCtrls} />
+            <ButtonFilters controls={typeFltrsCtrls} />
+
             <div className="placementsPageRow">
                 <div className="placementsTableContainer">
                     <DataGrid
+                        ref={optionsDataGridRef}
                         dataSource={optionsDS}
                         keyExpr='id'
                         hoverStateEnabled={true}
                         onRowClick={turnToCandidate}
+                        onOptionChanged={optionsOptionChangedHandler}
                     >
                         <HeaderFilter
                             visible={true}
@@ -354,8 +456,9 @@ const PlacementsPage = () => {
                         <ColumnFixing enabled={true} />
                         <StateStoring
                             enabled={true}
-                            type='localStorage'
-                            storageKey='placementsOptionsDataGridStateStoring'
+                            type='custom'
+                            customSave={saveOptionsDataGridState}
+                            customLoad={loadOptionsDataGridState}
                         />
 
                         <Column
@@ -382,8 +485,9 @@ const PlacementsPage = () => {
                         <ColumnFixing enabled={true} />
                         <StateStoring
                             enabled={true}
-                            type='localStorage'
-                            storageKey='placementsCandidatesDataGridStateStoring'
+                            type='custom'
+                            customSave={saveCandidatesDataGridState}
+                            customLoad={loadCandidatesDataGridState}
                         />
                         <Editing
                             mode="cell"
