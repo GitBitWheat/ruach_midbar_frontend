@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext, useCallback } from 'react';
 import Circle from '@uiw/react-color-circle';
-import { SchoolsContext } from '../../store/SchoolsContextProvider';
+import { SchoolsContext } from '../../../store/SchoolsContextProvider';
+import './usecolors.css';
 
 const whiteHex = '#ffffff';
 
@@ -101,6 +102,7 @@ const useColors = (selectedPlanId, candidatesDS) => {
             <Circle
                 colors={[instructorToColorHex(key)]}
                 onClick={candidateSwitchColorClickEvent}
+                className='centeredColor'
             />
         );
     }, [instructorToColorHex, switchColorClickEvent, candidateColorIds]);
@@ -111,6 +113,7 @@ const useColors = (selectedPlanId, candidatesDS) => {
             <Circle
                 colors={[instructorToColorHex(key)]}
                 onClick={optionalSwitchColorClickEvent}
+                className='centeredColor'
             />
         );
     }, [instructorToColorHex, switchColorClickEvent, optionalColorIds]);

@@ -16,7 +16,7 @@ import { symmDiff } from "../../utils/arrayUtils";
 import { dataGridRowLongClick } from "../../utils/datagridrowlongclick";
 import { dataGridRightOnContentReady } from "../../utils/datagridrightoncontentready";
 
-import useColors from "./usecolors";
+import useColors from "./usecolors/usecolors";
 import ButtonFilters from "./optionsfilters/buttonfilters";
 import useOptionsFilters from "./optionsfilters/useoptionsfilters";
 

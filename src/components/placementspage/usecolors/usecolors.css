@@ -1,0 +1,10 @@
+.centeredColor {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.centeredColor > div {
+    margin: 0px 0px 0px 0px !important;
+}
