@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { getDistanceRequest } from "../../../utils/localServerRequests";
 import { symmDiff } from "../../../utils/arrayUtils";
 
@@ -78,23 +78,46 @@ const useDists = (selectedPlan, optionsDGRef, candidatesDGRef) => {
     const distCalculateCellValue = data =>
         (selectedPlan && selectedPlan.city === data.city) ? 0 : (dists[data.city] || null);
 
-    // Refreshes grids when dists are loaded
-    useEffect(() => {
-        if (optionsDGRef && optionsDGRef.current) {
-            /** @type {DataGrid} */
-            const dg = optionsDGRef.current;
-            dg.instance.clearSorting();
-            dg.instance.columnOption('dist', 'sortOrder', 'asc');
+    /**
+     * Resorts the grids by dists.
+     */
+    const resortGrids = useCallback(() => {
+        for (const dgRef of [optionsDGRef, candidatesDGRef]) {
+            if (dgRef && dgRef.current) {
+                /** @type {import('devextreme-react/data-grid').DataGrid} */
+                const dg = dgRef.current;
+                dg.instance.clearSorting();
+                dg.instance.columnOption('dist', 'sortOrder', 'asc');
+            }
         }
-        if (candidatesDGRef && candidatesDGRef.current) {
-            /** @type {DataGrid} */
-            const dg = candidatesDGRef.current;
-            dg.instance.clearSorting();
-            dg.instance.columnOption('dist', 'sortOrder', 'asc');
-        }
-    }, [dists, optionsDGRef, candidatesDGRef]);
+    }, [optionsDGRef, candidatesDGRef]);
 
-    return distCalculateCellValue;
+    // Resorts the grids by dists when new distances are loaded
+    useEffect(() => {
+        resortGrids();
+    }, [dists, resortGrids]);
+ 
+    /**
+     * OptionChanged event handler. Resorts grids by dists when content is ready, but only when necessary
+     * @param {import('devextreme/ui/data_grid').OptionChangedEvent} event 
+     */
+    const resortByDistOptionChangedHandler = event => {
+        // Preventing an infinite loop
+        // Preventing unnecessary columnOption calls on unrelated option changes
+        if (event.fullName === 'columns[1].sortOrder' ||
+            ['hoveredElement', 'onRowPrepared'].includes(event.fullName)) {
+            return;
+        }
+
+        // If datagrid is already supposed to be sorted by dists, then resort. Otherwise do nothing.
+        const distSortIndex = event.component.columnOption('dist', 'sortIndex');
+        if (distSortIndex === 0) {
+            event.component.clearSorting();
+            event.component.columnOption('dist', 'sortOrder', 'asc');
+        }
+    };
+
+    return [distCalculateCellValue, resortGrids, resortByDistOptionChangedHandler];
 };
 
 export default useDists;

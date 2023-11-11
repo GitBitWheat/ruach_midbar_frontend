@@ -47,8 +47,8 @@ const PlacementsPage = () => {
 
     const [selectedPlan, handlePlanChange] = usePlanSelect();
 
-    const optionsDGRef = useRef();
-    const candidatesDGRef = useRef();
+    const optionsDGRef = useRef(null);
+    const candidatesDGRef = useRef(null);
 
     const [optionsDS, candidatesDS] = useInstDataSources(selectedPlan);
 
@@ -57,6 +57,10 @@ const PlacementsPage = () => {
         candidatesSwitchColorToDefault, optionSwitchColorToDefault, deleteColor] =
         useColors(selectedPlan && selectedPlan.id, candidatesDS);
 
+    // Distances logic
+    const [distCalculateCellValue, resortGrids, resortByDistOptionChangedHandler] =
+        useDists(selectedPlan, optionsDGRef, candidatesDGRef);
+
     // Handlers of turning instructors to candidates and options
     const turnToCandidate = data => {
         storeMethods.addInstructorPlacement(data.id, selectedPlan && selectedPlan.id);
@@ -64,7 +68,16 @@ const PlacementsPage = () => {
         // After turning an instructor to a candidate, delete their color
         deleteColor(data.id);
     };
-    const optionsRowPreparedHandler = dataGridRowLongClick(turnToCandidate);
+    const optionsRowPreparedHandler = dataGridRowLongClick(
+        /** @param {import('devextreme/ui/data_grid').RowPreparedEvent} event */
+        event => {
+            turnToCandidate(event.data);
+
+            // After updating the options/candidates data, resort the grids by dists
+            // Only works with a timeout for some reason
+            setTimeout(resortGrids, 500);
+        }
+    );
 
     const turnToOptional = data => {
         storeMethods.deleteInstructorPlacement(data.id, selectedPlan && selectedPlan.id);
@@ -72,10 +85,18 @@ const PlacementsPage = () => {
         // After turning an instructor to optional, give them the default option color
         optionSwitchColorToDefault(data.id);
     };
-    const candidatesRowPreparedHandler = dataGridRowLongClick(turnToOptional);
+    const candidatesRowPreparedHandler = dataGridRowLongClick(
+        /** @param {import('devextreme/ui/data_grid').RowPreparedEvent} event */
+        event => {
+            turnToOptional(event.data);
 
-    // Distances and plan messages logic
-    const distCalculateCellValue = useDists(selectedPlan, optionsDGRef, candidatesDGRef);
+            // After updating the options/candidates data, resort the grids by dists
+            // Only works with a timeout for some reason
+            setTimeout(resortGrids, 1000);
+        }
+    );
+
+    // Messages logic
     const [msg, handleMsgInput, updatePlanMsg, sendMsgToCandidates] = usePlanMsg(selectedPlan, candidatesDS);
 
     // Selected plan button functionalities
@@ -86,6 +107,7 @@ const PlacementsPage = () => {
         candidatesSwitchColorToDefault();
     }
 
+    // Candidate placements logic
     const [placeCandidates, cancelPlacement1, cancelPlacement2, cancelPlacement3, cancelPlacement4] =
         usePlaceCandidates(selectedPlan, candidatesDS);
 
@@ -111,11 +133,14 @@ const PlacementsPage = () => {
     const optionsOptionChangedHandler = event => {
         updateBtnFltrs(event, 6, areaFltrsCtrls);
         updateBtnFltrs(event, 9, typeFltrsCtrls);
+        resortByDistOptionChangedHandler(event);
     };
 
-    // firstName is a link value, and the header filter datasource is adjusted accordingly
+    // firstName and cv are link values, and the header filter datasources are adjusted accordingly
     const firstNameOptionsHeaderFilterDS = useLinkDataSource(optionsDS, 'firstName');
     const firstNameCandidatesHeaderFilterDS = useLinkDataSource(candidatesDS, 'firstName');
+    const cvOptionsHeaderFilterDS = useLinkDataSource(optionsDS, 'cv');
+    const cvCandidatesHeaderFilterDS = useLinkDataSource(candidatesDS, 'cv');
 
     const distCol = () => (
         <Column
@@ -145,14 +170,17 @@ const PlacementsPage = () => {
         </Column>
     );
 
-    const restInstCols = () => [
+    const lastNameCol = () => (
         <Column
             key="lastName"
             dataField="lastName"
             dataType="string"
             caption={pageText.lastName}
             allowEditing={false}
-        />,
+        />
+    );
+
+    const cvCol = headerFilterDS => (
         <Column
             key="cv"
             dataField="cv"
@@ -160,7 +188,12 @@ const PlacementsPage = () => {
             caption={pageText.cvAbbrv}
             cellRender={LinkCell}
             allowEditing={false}
-        />,
+        >
+            <HeaderFilter dataSource={headerFilterDS}/>
+        </Column>
+    );
+
+    const restInstCols = () => [
         <Column
             key="city"
             dataField="city"
@@ -296,6 +329,8 @@ const PlacementsPage = () => {
                         />
                         {distCol()}
                         {firstNameCol(firstNameOptionsHeaderFilterDS.dataSource)}
+                        {lastNameCol()}
+                        {cvCol(cvOptionsHeaderFilterDS.dataSource)}
                         {restInstCols()}
                     </DataGrid>
                 </div>
@@ -342,6 +377,8 @@ const PlacementsPage = () => {
                         />
                         {distCol()}
                         {firstNameCol(firstNameCandidatesHeaderFilterDS.dataSource)}
+                        {lastNameCol()}
+                        {cvCol(cvCandidatesHeaderFilterDS.dataSource)}
                         {restInstCols()}
                     </DataGrid>
                 </div>

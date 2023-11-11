@@ -1,14 +1,18 @@
 const holdLen = 500;
 
-/** @param {Function} logic */
-export const dataGridRowLongClick = logic =>
+/**
+ * RowPrepared event handler. Constructs a long click event for the row, and assigns
+ * longClickHandler to be its handler. longClickHandler gets the RowPreparedEvent object.
+ * @param {Function} longClickHandler
+*/
+export const dataGridRowLongClick = longClickHandler =>
     /** @param {import('devextreme/ui/data_grid').RowPreparedEvent} event */
     event => {
         if (event.rowType === 'data') {
             let lastTimeout = null;
             event.rowElement.addEventListener('mousedown', _event => {
                 clearTimeout(lastTimeout);
-                lastTimeout = setTimeout(() => {logic(event.data);}, holdLen);
+                lastTimeout = setTimeout(() => {longClickHandler(event);}, holdLen);
             });
             event.rowElement.addEventListener('mouseup', _event => {
                 clearTimeout(lastTimeout);
