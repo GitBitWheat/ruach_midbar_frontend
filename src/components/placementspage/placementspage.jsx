@@ -23,6 +23,7 @@ import useOptionsFilters from "./optionsfilters/useoptionsfilters";
 import settingsConstants from '../../utils/settingsconstants.json';
 import pageText from './placementspagetext.json';
 import './placementspage.css';
+import useLinkDataSource from "../../customhooks/uselinkdatasource";
 
 /**
  * Calculate the instructor data sources (the options and the placed candidates)
@@ -350,7 +351,11 @@ const PlacementsPage = () => {
         updateBtnFltrs(event, 9, typeFltrsCtrls);
     }, [areaFltrsCtrls, typeFltrsCtrls]);
 
-    const instructorColumns = () => [
+    // firstName is a link value, and the header filter datasource is adjusted accordingly
+    const firstNameOptionsHeaderFilterDS = useLinkDataSource(optionsDS, 'firstName')
+    const firstNameCandidatesHeaderFilterDS = useLinkDataSource(candidatesDS, 'firstName')
+
+    const distCol = () => (
         <Column
             key="dist"
             name="dist"
@@ -362,7 +367,9 @@ const PlacementsPage = () => {
             allowSorting={true}
             sortOrder="asc"
             sortingMethod={distColSortingMethod}
-        />,
+        />
+    );
+    const firstNameCol = headerFilterDS => (
         <Column
             key="firstName"
             dataField="firstName"
@@ -370,7 +377,11 @@ const PlacementsPage = () => {
             caption={pageText.firstName}
             cellRender={WhatsappCell}
             allowEditing={false}
-        />,
+        >
+            <HeaderFilter dataSource={headerFilterDS}/>
+        </Column>
+    );
+    const restInstCols = () => [
         <Column
             key="lastName"
             dataField="lastName"
@@ -398,9 +409,10 @@ const PlacementsPage = () => {
             dataField="area"
             dataType="string"
             caption={pageText.area}
-            headerFilter={{ dataSource: areasHeaderFilterDS }}
             allowEditing={false}
-        />,
+        >
+            <HeaderFilter dataSource={areasHeaderFilterDS}/>
+        </Column>,
         <Column
             key="sector"
             dataField="sector"
@@ -518,7 +530,9 @@ const PlacementsPage = () => {
                             caption={pageText.color}
                             cellRender={optionalColorColCellRender}
                         />
-                        {instructorColumns()}
+                        {distCol()}
+                        {firstNameCol(firstNameOptionsHeaderFilterDS.dataSource)}
+                        {restInstCols()}
                     </DataGrid>
                 </div>
                 <div className="placementsTableContainer">
@@ -562,7 +576,9 @@ const PlacementsPage = () => {
                             caption={pageText.color}
                             cellRender={candidateColorColCellRender}
                         />
-                        {instructorColumns()}
+                        {distCol()}
+                        {firstNameCol(firstNameCandidatesHeaderFilterDS.dataSource)}
+                        {restInstCols()}
                     </DataGrid>
                 </div>
             </div>

@@ -1,8 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { uniques } from "../utils/arrayUtils";
 
-
-
 const linkToText = link => link ? (link.split('#')[0] || '(Blanks)') : '(Blanks)';
 
 const textsValues = (ds, field) =>
@@ -17,8 +15,6 @@ const fieldCounts = arr =>
             [curr]: 1 + (prev[curr] || 0),
         }), {}
     );
-
-
 
 const useLinkDataSource = (dataSource, linkField) => {
 
@@ -85,7 +81,5 @@ const useLinkDataSource = (dataSource, linkField) => {
         remove: remove
     };
 };
-
-
 
 export default useLinkDataSource;
