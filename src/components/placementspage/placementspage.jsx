@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { DataGrid, HeaderFilter, Column, ColumnChooser, ColumnFixing, StateStoring, Editing, Paging }
+import { DataGrid, HeaderFilter, Column, ColumnFixing, StateStoring, Editing, Paging }
     from 'devextreme-react/data-grid';
 import { Button, TextArea } from "devextreme-react";
 
@@ -294,7 +294,6 @@ const PlacementsPage = () => {
                             search={{ enabled: true }} 
                             height={settingsConstants.headerFilterHeight}
                         />
-                        <ColumnChooser enabled={true} />
                         <ColumnFixing enabled={true} />
                         <StateStoring
                             enabled={true}
@@ -334,7 +333,6 @@ const PlacementsPage = () => {
                             search={{ enabled: true }}
                             height={settingsConstants.headerFilterHeight}
                         />
-                        <ColumnChooser enabled={true} />
                         <ColumnFixing enabled={true} />
                         <StateStoring
                             enabled={true}
