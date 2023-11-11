@@ -25,3 +25,8 @@
 .smallGapRow > * {
     margin-left: 3px;
 }
+
+.pagerAboveDataGrid {
+    border-top: 0px;
+    padding-top: 0px;
+}

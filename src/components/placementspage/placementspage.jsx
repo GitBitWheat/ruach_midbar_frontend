@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { DataGrid, HeaderFilter, Column, ColumnChooser, ColumnFixing, StateStoring, Editing }
+import { DataGrid, HeaderFilter, Column, ColumnChooser, ColumnFixing, StateStoring, Editing, Paging }
     from 'devextreme-react/data-grid';
 import { Button, TextArea } from "devextreme-react";
 
@@ -9,9 +9,6 @@ import InstructorTypesColumn from "../instructortypescolumn/instructortypescolum
 import PlanCard from "./plancard/plancard";
 import PlanMenu from "../planmenu/planmenu";
 
-import areas from '../../static/instructor_areas.json';
-import { dataGridRightOnContentReady } from "../../utils/datagridrightoncontentready";
-
 import useColors from "./hooks/usecolors/usecolors";
 import ButtonFilters from "./optionsfilters/buttonfilters";
 import useOptionsFilters from "./optionsfilters/useoptionsfilters";
@@ -19,12 +16,16 @@ import useLinkDataSource from "../../customhooks/uselinkdatasource";
 import usePlanSelect from "./hooks/useplanselect";
 import useInstDataSources from "./hooks/useinstdatasources";
 import useDists, { updateDGFltrs, updateBtnFltrs } from "./hooks/usedists";
-import { noFilterValuesStateHandle } from "./misc/nofiltervaluesstatehandle";
-import { distColSortingMethod } from "./misc/distcolsortingmethod";
 import usePlanMsg from "./hooks/useplanmsg";
 import usePlaceCandidates from "./hooks/useplacecandidates";
 import useInstToOptionOrCandidate from "./hooks/useinsttooptionorcandidate";
 
+import { noFilterValuesStateHandle } from "./misc/nofiltervaluesstatehandle";
+import { distColSortingMethod } from "./misc/distcolsortingmethod";
+import { movePagerAboveGridOnContentReady } from "./misc/movepagerabovegridoncontentready";
+import { dataGridRightOnContentReady } from "../../utils/datagridrightoncontentready";
+
+import areas from '../../static/instructor_areas.json';
 import settingsConstants from '../../utils/settingsconstants.json';
 import pageText from './placementspagetext.json';
 import './placementspage.css';
@@ -100,6 +101,16 @@ const PlacementsPage = () => {
         updateBtnFltrs(event, 6, areaFltrsCtrls);
         updateBtnFltrs(event, 9, typeFltrsCtrls);
         resortByDistOptionChangedHandler(event);
+    };
+
+    /**
+     * Loads the tables on the right side of the horizontal scroll,
+     * and moves the pager above the datagrid
+     * @param {import('devextreme/ui/data_grid').ContentReadyEvent} event 
+     */
+    const ContentReadyHandler = event => {
+        dataGridRightOnContentReady(event);
+        movePagerAboveGridOnContentReady(event);
     };
 
     // firstName and cv are link values, and the header filter datasources are adjusted accordingly
@@ -272,7 +283,7 @@ const PlacementsPage = () => {
                         hoverStateEnabled={true}
                         onRowPrepared={optionsRowPreparedHandler}
                         onOptionChanged={optionsOptionChangedHandler}
-                        onContentReady={dataGridRightOnContentReady}
+                        onContentReady={ContentReadyHandler}
                     >
                         <HeaderFilter
                             visible={true}
@@ -286,6 +297,11 @@ const PlacementsPage = () => {
                             type='custom'
                             customSave={saveOptionsDataGridState}
                             customLoad={loadOptionsDataGridState}
+                        />
+                        <Paging
+                            enabled={true}
+                            pageSize={settingsConstants.dataGridRowsPageSize}
+                            defaultPageIndex={0}
                         />
 
                         <Column
@@ -307,7 +323,7 @@ const PlacementsPage = () => {
                         keyExpr='id'
                         hoverStateEnabled={true}
                         onRowPrepared={candidatesRowPreparedHandler}
-                        onContentReady={dataGridRightOnContentReady}
+                        onContentReady={ContentReadyHandler}
                     >
                         <HeaderFilter
                             visible={true}
@@ -327,6 +343,11 @@ const PlacementsPage = () => {
                             allowAdding={false}
                             allowDeleting={false}
                             allowUpdating={true}
+                        />
+                        <Paging
+                            enabled={true}
+                            pageSize={settingsConstants.dataGridRowsPageSize}
+                            defaultPageIndex={0}
                         />
 
                         <Column
