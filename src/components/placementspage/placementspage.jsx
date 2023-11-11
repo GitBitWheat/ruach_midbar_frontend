@@ -1,4 +1,4 @@
-import { useEffect, useContext, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { DataGrid, HeaderFilter, Column, ColumnChooser, ColumnFixing, StateStoring, Editing }
     from 'devextreme-react/data-grid';
 import { Button, TextArea } from "devextreme-react";
@@ -9,9 +9,7 @@ import InstructorTypesColumn from "../instructortypescolumn/instructortypescolum
 import PlanCard from "./plancard/plancard";
 import PlanMenu from "../planmenu/planmenu";
 
-import { SchoolsContext } from "../../store/SchoolsContextProvider";
 import areas from '../../static/instructor_areas.json';
-import { dataGridRowLongClick } from "../../utils/datagridrowlongclick";
 import { dataGridRightOnContentReady } from "../../utils/datagridrightoncontentready";
 
 import useColors from "./hooks/usecolors/usecolors";
@@ -25,6 +23,7 @@ import { noFilterValuesStateHandle } from "./misc/nofiltervaluesstatehandle";
 import { distColSortingMethod } from "./misc/distcolsortingmethod";
 import usePlanMsg from "./hooks/useplanmsg";
 import usePlaceCandidates from "./hooks/useplacecandidates";
+import useInstToOptionOrCandidate from "./hooks/useinsttooptionorcandidate";
 
 import settingsConstants from '../../utils/settingsconstants.json';
 import pageText from './placementspagetext.json';
@@ -41,9 +40,6 @@ const [saveCandidatesDataGridState, loadCandidatesDataGridState] =
     noFilterValuesStateHandle('candidatesDataGridStateStoring');
 
 const PlacementsPage = () => {
-
-    const storeCtx = useContext(SchoolsContext);
-    const storeMethods = storeCtx.methods;
 
     const [selectedPlan, handlePlanChange] = usePlanSelect();
 
@@ -62,38 +58,8 @@ const PlacementsPage = () => {
         useDists(selectedPlan, optionsDGRef, candidatesDGRef);
 
     // Handlers of turning instructors to candidates and options
-    const turnToCandidate = data => {
-        storeMethods.addInstructorPlacement(data.id, selectedPlan && selectedPlan.id);
-
-        // After turning an instructor to a candidate, delete their color
-        deleteColor(data.id);
-    };
-    const optionsRowPreparedHandler = dataGridRowLongClick(
-        /** @param {import('devextreme/ui/data_grid').RowPreparedEvent} event */
-        event => {
-            turnToCandidate(event.data);
-
-            // After updating the options/candidates data, resort the grids by dists
-            // Only works with a timeout for some reason
-            setTimeout(resortGrids, 500);
-        }
-    );
-
-    const turnToOptional = data => {
-        storeMethods.deleteInstructorPlacement(data.id, selectedPlan && selectedPlan.id);
-
-        // After turning an instructor to optional, give them the default option color
-        optionSwitchColorToDefault(data.id);
-    };
-    const candidatesRowPreparedHandler = dataGridRowLongClick(
-        /** @param {import('devextreme/ui/data_grid').RowPreparedEvent} event */
-        event => {
-            turnToOptional(event.data);
-
-            // After updating the options/candidates data, resort the grids by dists
-            // Only works with a timeout for some reason
-            setTimeout(resortGrids, 1000);
-        }
+    const [optionsRowPreparedHandler, candidatesRowPreparedHandler] = useInstToOptionOrCandidate(
+        selectedPlan, optionSwitchColorToDefault, deleteColor, resortGrids
     );
 
     // Messages logic
