@@ -37,3 +37,11 @@
     border-top: 0px;
     padding-top: 0px;
 }
+
+.yellowBtn {
+    background-color: #ffc107;
+}
+
+.lightBlueBtn {
+    background-color: #0dcaf0;
+}

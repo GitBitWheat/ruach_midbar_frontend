@@ -216,7 +216,7 @@ const PlacementsPage = () => {
                 </div>
                 <div>
                     <TextArea
-                        height={225}
+                        height={200}
                         width={300}
                         value={msg}
                         onInput={handleMsgInput}
@@ -237,18 +237,21 @@ const PlacementsPage = () => {
                         icon="bi bi-send"
                         onClick={sendMsgBtnClickHandler}
                         disabled={!(!!selectedPlan)}
+                        className="yellowBtn"
                     />
                     <Button
                         text={pageText.saveMsg}
                         icon="bi bi-floppy"
                         onClick={updatePlanMsg}
                         disabled={!(!!selectedPlan)}
+                        className="yellowBtn"
                     />
                     <Button
                         text={pageText.placeCandidates}
                         icon="bi bi-plus-lg"
                         onClick={placeCandidates}
                         disabled={!(!!selectedPlan)}
+                        className="yellowBtn"
                     />
                     <span className={selectedPlan ? "" : "dx-state-disabled dx-widget"}>
                         {pageText.unplacePlanInstructor}
@@ -258,21 +261,25 @@ const PlacementsPage = () => {
                             text="1"
                             onClick={cancelPlacement1}
                             disabled={!(!!selectedPlan)}
+                            className="lightBlueBtn"
                         />
                         <Button
                             text="2"
                             onClick={cancelPlacement2}
                             disabled={!(!!selectedPlan)}
+                            className="lightBlueBtn"
                         />
                         <Button
                             text="3"
                             onClick={cancelPlacement3}
                             disabled={!(!!selectedPlan)}
+                            className="lightBlueBtn"
                         />
                         <Button
                             text="4"
                             onClick={cancelPlacement4}
                             disabled={!(!!selectedPlan)}
+                            className="lightBlueBtn"
                         />
                     </span>
                 </div>
