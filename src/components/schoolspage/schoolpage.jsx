@@ -1,9 +1,8 @@
-import React, { useContext, useCallback, useMemo, useRef } from 'react';
+import React, { useContext, useRef } from 'react';
 
 import { SchoolsContext } from '../../store/SchoolsContextProvider'
 import { SettingsContext } from '../settingscontext/settingscontext';
 
-import School from '../../store/storeModels/school';
 import useLinkDataSource from '../../customhooks/uselinkdatasource';
 import useSearch from '../../customhooks/usesearch';
 import useClearFiltersButton from '../../customhooks/useclearfiltersbutton/useclearfiltersbutton';
@@ -16,53 +15,17 @@ import ContactsSubgrid from "./contactssubgrid";
 import WhatsappCell from '../customcells/whatsappcell/whatsappcell';
 import WhatsappEditCell from '../customcells/whatsappcell/whatsappeditcell';
 
+import { clickSchoolNameCellForExpandingRow } from './misc/clickschoolnamecellforexpandingrow';
+import useHandleCurrentRowAction from './hooks/usehandlecurrentrowaction';
+import handleDoneRowAction from './misc/handledonerowaction';
+
 import settingsConstants from '../../utils/settingsconstants.json';
 import pageText from './schoolspagetext.json';
-
-/**
- * A short click on a school name column cell expands the contacts list of that school.
- * A long click enables editing for that cell (assuming the editing mode supports editing by cell)
- * @param {import("devextreme/ui/data_grid").CellPreparedEvent} event The cell prepared event
- */
-const clickSchoolNameCellForExpandingRow = event => {
-    if (event.column.dataField === 'name' && event.rowType !== 'header') {
-        let timeout;
-        let isLongClick = false;
-        event.cellElement.addEventListener('mousedown', _mouseDownEvent => {
-            timeout = setTimeout(() => {
-                isLongClick = true;
-
-                const editMode = event.component.option('editing').mode;
-                if (['batch', 'cell'].includes(editMode)) {
-                    event.component.editCell(event.rowIndex, 'name');
-                }
-            }, 200);
-        });
-        event.cellElement.addEventListener('mouseup', _mouseUpEvent => {
-            clearTimeout(timeout);
-        });
-
-        event.cellElement.classList.add('expandRowCell');
-        event.cellElement.addEventListener('click', clickEvent => {
-            if (!isLongClick) {
-                if (event.row.isExpanded) {
-                    event.component.collapseRow(event.row.key);
-                } else {
-                    event.component.expandRow(event.row.key);
-                }
-            }
-            clickEvent.preventDefault();
-            clickEvent.stopPropagation();
-            isLongClick = false;
-        });
-    }
-};
 
 const SchoolsPage = () => {
 
     const storeCtx = useContext(SchoolsContext);
     const storeData = storeCtx.data;
-    const storeMethods = storeCtx.methods;
 
     const settings = useContext(SettingsContext);
 
@@ -73,62 +36,11 @@ const SchoolsPage = () => {
 
     // Filter data sources for link columns
     const repLinkDs = useLinkDataSource(storeData.schools, 'representative');
-    const linkDsLst = useMemo(() => [repLinkDs], [repLinkDs]);
 
-    const handleRowInserting = useCallback(event => {
-        const schoolData = new School(event.data);
-        const isCanceled = new Promise(resolve => {
-            storeMethods.addSchool(schoolData)
-                .then((validationResult) => {
-                    for (const linkDs of linkDsLst) {
-                        linkDs.add(schoolData);
-                    }
-                    resolve(!validationResult);
-                });
-        });
-        event.cancel = isCanceled;
-    }, [storeMethods, linkDsLst]);
-
-    const handleRowRemoving = useCallback(event => {
-        const isCanceled = new Promise(resolve => {
-            storeMethods.deleteSchool(event.key)
-                .then((validationResult) => {
-                    for (const linkDs of linkDsLst) {
-                        linkDs.remove(event.data);
-                    }
-                    resolve(!validationResult);
-                });
-        });
-        event.cancel = isCanceled;
-    }, [storeMethods, linkDsLst]);
-
-    const handleRowUpdating = useCallback(event => {
-        const schoolData = new School({...event.oldData, ...event.newData});
-        const isCanceled = new Promise(resolve => {
-            storeMethods.updateSchool(event.key, schoolData)
-                .then((validationResult) => {
-                    for (const linkDs of linkDsLst) {
-                        linkDs.update(event.oldData, schoolData);
-                    }
-                    resolve(!validationResult);
-                });
-        });
-        event.cancel = isCanceled;
-    }, [storeMethods, linkDsLst]);
+    const [handleRowInserting, handleRowRemoving, handleRowUpdating] = useHandleCurrentRowAction(repLinkDs);
 
     // Update link data sources after updating plans data source, and log the update
-    const handleRowInserted = useCallback(event => {
-        console.log('Added school is: ', new School(event.data));
-    }, []);
-
-    const handleRowRemoved = useCallback(event => {
-        console.log('Removed school is: ', event.data);
-    }, []);
-
-    const handleRowUpdated = useCallback(event => {
-        const schoolData = new School({...event.oldData, ...event.newData});
-        console.log('Updated school is: ', schoolData);
-    }, []);
+    const [handleRowInserted, handleRowRemoved, handleRowUpdated] = handleDoneRowAction();
 
     return (
         <div className="schoolTable">
