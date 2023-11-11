@@ -28,6 +28,7 @@ const PlanMenu = ({ selectedPlanId, selectedPlanYear, selectedPlanStatus, setNew
                 setter={setYear}
                 defaultSelected={year}
                 noneSelectedValue={null}
+                width={'8.75vw'}
             />
             <SearchBar
                 barName="planStatuses"
@@ -37,6 +38,7 @@ const PlanMenu = ({ selectedPlanId, selectedPlanYear, selectedPlanStatus, setNew
                 setter={setStatus}
                 defaultSelected={status}
                 noneSelectedValue={null}
+                width={'8.75vw'}
             />
             <SearchBar
                 barName="sameYearStatusInstitutePlans"

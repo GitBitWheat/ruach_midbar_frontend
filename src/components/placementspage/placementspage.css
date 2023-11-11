@@ -3,6 +3,7 @@
     flex-direction: column;
     justify-content: flex-start;
     gap: 10px;
+    padding-top: 2px;
 }
 
 .placementsPageRow {
@@ -18,8 +19,14 @@
     width: 48.5vw;
 }
 
+#filterButtonsContainer {
+    width: 50vw;
+    min-width: 50vw;
+}
+
 #planCardContainer {
-    width: 30vw;
+    width: 25vw;
+    min-width: 25vw;
 }
 
 .smallGapRow > * {

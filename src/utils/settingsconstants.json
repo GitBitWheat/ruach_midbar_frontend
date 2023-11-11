@@ -1,5 +1,5 @@
 {
-    "dataGridRowsPageSize": 2,
+    "dataGridRowsPageSize": 20,
     "columnLookupPageSize": 20,
     "headerFilterHeight": 600,
     "selectBoxPageSize": 20,

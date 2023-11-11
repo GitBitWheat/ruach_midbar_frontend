@@ -207,72 +207,76 @@ const PlacementsPage = () => {
     return (
         <div className="placementsPageContainer">
             <div className="placementsPageRow">
+                <div id="filterButtonsContainer">
+                    <ButtonFilters controls={areaFltrsCtrls} />
+                    <ButtonFilters controls={typeFltrsCtrls} />
+                </div>
                 <div id="planCardContainer">
                     <PlanCard planId={(selectedPlan && selectedPlan.id) || null} />
                 </div>
                 <div>
-                    <PlanMenu
-                        selectedPlanId={selectedPlan ? selectedPlan.id : null}
-                        selectedPlanYear={selectedPlan ? selectedPlan.year : null}
-                        selectedPlanStatus={selectedPlan ? selectedPlan.status : null}
-                        setNewPlan={handlePlanChange}
-                    />
                     <TextArea
-                        height={125}
+                        height={225}
+                        width={300}
                         value={msg}
                         onInput={handleMsgInput}
                         disabled={!(!!selectedPlan)}
                     />
-                    <div className="flex-row">
-                        <Button
-                            text={pageText.sendMessagesToInstructors}
-                            icon="bi bi-send"
-                            onClick={sendMsgBtnClickHandler}
-                            disabled={!(!!selectedPlan)}
-                        />
-                        <Button
-                            text={pageText.saveMsg}
-                            icon="bi bi-floppy"
-                            onClick={updatePlanMsg}
-                            disabled={!(!!selectedPlan)}
-                        />
-                        <Button
-                            text={pageText.placeCandidates}
-                            icon="bi bi-plus-lg"
-                            onClick={placeCandidates}
-                            disabled={!(!!selectedPlan)}
-                        />
-                        <span className={selectedPlan ? "" : "dx-state-disabled dx-widget"}>
-                            {pageText.unplacePlanInstructor}
-                        </span>
-                        <span className="smallGapRow">
-                            <Button
-                                text="1"
-                                onClick={cancelPlacement1}
-                                disabled={!(!!selectedPlan)}
-                            />
-                            <Button
-                                text="2"
-                                onClick={cancelPlacement2}
-                                disabled={!(!!selectedPlan)}
-                            />
-                            <Button
-                                text="3"
-                                onClick={cancelPlacement3}
-                                disabled={!(!!selectedPlan)}
-                            />
-                            <Button
-                                text="4"
-                                onClick={cancelPlacement4}
-                                disabled={!(!!selectedPlan)}
-                            />
-                        </span>
-                    </div>
                 </div>
             </div>
-
-            <ButtonFilters controls={areaFltrsCtrls} />
-            <ButtonFilters controls={typeFltrsCtrls} />
+            <div className="flex-row">
+                <PlanMenu
+                    selectedPlanId={selectedPlan ? selectedPlan.id : null}
+                    selectedPlanYear={selectedPlan ? selectedPlan.year : null}
+                    selectedPlanStatus={selectedPlan ? selectedPlan.status : null}
+                    setNewPlan={handlePlanChange}
+                />
+                <div className="flex-row">
+                    <Button
+                        text={pageText.sendMessagesToInstructors}
+                        icon="bi bi-send"
+                        onClick={sendMsgBtnClickHandler}
+                        disabled={!(!!selectedPlan)}
+                    />
+                    <Button
+                        text={pageText.saveMsg}
+                        icon="bi bi-floppy"
+                        onClick={updatePlanMsg}
+                        disabled={!(!!selectedPlan)}
+                    />
+                    <Button
+                        text={pageText.placeCandidates}
+                        icon="bi bi-plus-lg"
+                        onClick={placeCandidates}
+                        disabled={!(!!selectedPlan)}
+                    />
+                    <span className={selectedPlan ? "" : "dx-state-disabled dx-widget"}>
+                        {pageText.unplacePlanInstructor}
+                    </span>
+                    <span className="smallGapRow">
+                        <Button
+                            text="1"
+                            onClick={cancelPlacement1}
+                            disabled={!(!!selectedPlan)}
+                        />
+                        <Button
+                            text="2"
+                            onClick={cancelPlacement2}
+                            disabled={!(!!selectedPlan)}
+                        />
+                        <Button
+                            text="3"
+                            onClick={cancelPlacement3}
+                            disabled={!(!!selectedPlan)}
+                        />
+                        <Button
+                            text="4"
+                            onClick={cancelPlacement4}
+                            disabled={!(!!selectedPlan)}
+                        />
+                    </span>
+                </div>
+            </div>
 
             <div className="placementsPageRow">
                 <div className="placementsTableContainer">
