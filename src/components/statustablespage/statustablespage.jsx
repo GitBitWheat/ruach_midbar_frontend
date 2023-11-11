@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { SchoolsContext } from "../../store/SchoolsContextProvider";
-import AllSectorsStatusTable from "./allsectorsstatustable";
-import SectorStatusTable from "./sectorstatustable";
+import AllSectorsStatusTable from "./allsectorsstatustable/allsectorsstatustable";
+import SectorStatusTable from "./sectorstatustable/sectorstatustable";
 import './statustablespage.css';
 
 const StatusTablesPage = () => {

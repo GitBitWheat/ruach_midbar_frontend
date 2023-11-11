@@ -1,46 +1,22 @@
-import { useContext, useMemo } from "react";
-import { SchoolsContext } from '../../store/SchoolsContextProvider';
+import { useContext } from "react";
+import { SchoolsContext } from '../../../store/SchoolsContextProvider';
 import { DataGrid } from "devextreme-react";
 import { Column, Paging, HeaderFilter, ColumnChooser, ColumnFixing, StateStoring }
     from "devextreme-react/data-grid";
-import { firstClickDescSort } from "../../utils/datagridutils";
+import { firstClickDescSort } from "../../../utils/datagridutils";
 
-import settingsConstants from '../../utils/settingsconstants.json';
-import pageText from './statustablespagetext.json';
+import useDS from "./hooks/useds";
+import useBlankLevelId from "./hooks/useblanklevelid";
 
-
+import settingsConstants from '../../../utils/settingsconstants.json';
+import pageText from '../statustablespagetext.json';
 
 const SectorStatusTable = ({ sector }) => {
     const storeCtx = useContext(SchoolsContext);
     const storeData = storeCtx.data;
 
-    const dataSource = useMemo(() =>
-        storeData.schoolStatuses
-        .filter(status => status)
-        .map(status => {
-            const statusRecord = {
-                id: status.id,
-                statusName: status.desc || pageText.noStatus
-            };
-            for (const level of storeData.levels) {
-                statusRecord[level.id] =
-                    storeData.schools
-                    .filter(school => school.status === status.desc && school.level === level.desc && school.sector === sector.desc)
-                    .length;
-            }
-            return statusRecord;
-        })
-        .filter(statusRecord => storeData.levels.some(level => statusRecord[level.id] > 0)),
-        [storeData.schoolStatuses, storeData.levels, storeData.schools, sector.desc]);
-
-    //Should be some constant id
-    const blankLevelId = useMemo(() => {
-            const blankLevel = storeData.levels.find(level => level.desc === null);
-            return blankLevel ? blankLevel.id : null;
-        }, [storeData.levels]
-    );
-
-
+    const dataSource = useDS(sector);
+    const blankLevelId = useBlankLevelId();
 
     return (
         <div>
@@ -95,7 +71,5 @@ const SectorStatusTable = ({ sector }) => {
         </div>
     );
 };
-
-
 
 export default SectorStatusTable;

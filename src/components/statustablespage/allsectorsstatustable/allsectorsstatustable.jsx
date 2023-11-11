@@ -1,42 +1,22 @@
-import { useContext, useMemo } from "react";
-import { SchoolsContext } from '../../store/SchoolsContextProvider';
+import { useContext } from "react";
+import { SchoolsContext } from '../../../store/SchoolsContextProvider';
 import { DataGrid } from "devextreme-react";
 import { Column, Paging, HeaderFilter, ColumnChooser, ColumnFixing, StateStoring }
     from "devextreme-react/data-grid";
-import { firstClickDescSort } from "../../utils/datagridutils";
+import { firstClickDescSort } from "../../../utils/datagridutils";
 
-import settingsConstants from '../../utils/settingsconstants.json';
-import pageText from './statustablespagetext.json';
+import useDS from "./hooks/useds";
+import useBlankSectorId from "./hooks/useblanksectorid";
 
-
+import settingsConstants from '../../../utils/settingsconstants.json';
+import pageText from '../statustablespagetext.json';
 
 const AllSectorsStatusTable = () => {
     const storeCtx = useContext(SchoolsContext);
     const storeData = storeCtx.data;
 
-    const dataSource = useMemo(() =>
-        storeData.schoolStatuses.map(status => {
-            const statusRecord = {
-                id: status.id,
-                statusName: status.desc || pageText.noStatus
-            };
-            for (const sector of storeData.sectors) {
-                statusRecord[sector.id] =
-                    storeData.schools
-                    .filter(school => school.status === status.desc && school.sector === sector.desc)
-                    .length;
-            }
-            return statusRecord;
-        }), [storeData.schoolStatuses, storeData.sectors, storeData.schools]);
-
-    //Should be some constant id
-    const blankSectorId = useMemo(() => {
-            const blankSector = storeData.sectors.find(sector => sector.desc === null);
-            return blankSector ? blankSector.id : null;
-        }, [storeData.sectors]
-    );
-
-
+    const dataSource = useDS();
+    const blankSectorId = useBlankSectorId();
 
     return (
         <div>
@@ -91,7 +71,5 @@ const AllSectorsStatusTable = () => {
         </div>
     );
 };
-
-
 
 export default AllSectorsStatusTable;
