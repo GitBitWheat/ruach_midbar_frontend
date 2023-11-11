@@ -11,7 +11,7 @@ import { whatsappCellValue } from '../contactspage/contactspage';
 
 import LinkCell from '../customcells/linkcell/linkcell';
 import LinkEditCell from '../customcells/linkcell/linkeditcell';
-import { instructorsCellRender } from '../planspage/planspage';
+import InstructorsCellRender from '../customcells/instructorscellrender';
 
 import Payment from '../../store/storeModels/payment';
 import { SchoolsContext } from '../../store/SchoolsContextProvider';
@@ -386,7 +386,7 @@ const PaymentsPage = () => {
                         <Column
                             caption={pageText.instructors}
                             dataType='string'
-                            cellRender={instructorsCellRender}
+                            cellRender={InstructorsCellRender}
                             calculateDisplayValue={plansInstructorsDisplayValue}
                         />
                         <Column
