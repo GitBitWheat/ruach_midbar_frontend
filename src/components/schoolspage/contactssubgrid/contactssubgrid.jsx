@@ -1,30 +1,28 @@
-import React, { useEffect, useState, useContext, useCallback } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { DataGrid, HeaderFilter, Editing, Column, FormItem, SearchPanel,
          Paging, ColumnChooser, ColumnFixing, StateStoring }
     from 'devextreme-react/data-grid';
 
-import { Button } from 'devextreme-react';
-import ArrayStore from 'devextreme/data/array_store';
-import DataSource from 'devextreme/data/data_source';
+import useGoogleContactActions from '../../../customhooks/usegooglecontactactions/usegooglecontactactions';
+import useContactsDS from './hooks/usecontactsds';
+import useRep from './hooks/userep';
 
-import useGoogleContactActions from '../../customhooks/usegooglecontactactions/usegooglecontactactions';
+import { calculateWhatsappCellValue } from '../../contactspage/misc/calculatewhatsappcellvalue';
+import { handleCurrentRowAction } from './misc/handlecurrentrowaction';
 
-import WhatsappCell from '../customcells/whatsappcell/whatsappcell';
+import WhatsappCell from '../../customcells/whatsappcell/whatsappcell';
 
-import { SchoolsContext } from '../../store/SchoolsContextProvider';
-import { SettingsContext } from '../settingscontext/settingscontext';
-import Contact from '../../store/storeModels/contact';
+import { SchoolsContext } from '../../../store/SchoolsContextProvider';
+import { SettingsContext } from '../../settingscontext/settingscontext';
 
-import settingsConstants from '../../utils/settingsconstants.json';
-import pageText from './schoolspagetext.json';
-import './schoolspage.css';
+import settingsConstants from '../../../utils/settingsconstants.json';
+import pageText from '../schoolspagetext.json';
+import '../schoolspage.css';
 
 const ContactsSubgrid = ({ data }) => {
 
     const storeCtx = useContext(SchoolsContext);
-    const storeData = storeCtx.data;
     const storeLookupData = storeCtx.lookupData;
-    const storeMethods = storeCtx.methods;
 
     const settings = useContext(SettingsContext);
 
@@ -36,95 +34,17 @@ const ContactsSubgrid = ({ data }) => {
     const city = school ? school.city : null;
     const schoolName = school ? school.name : null;
 
-    const [dataSource, setDataSource] = useState(null);
-    useEffect(() => {
-        setDataSource(getContacts(storeData.contacts, dataKey));
-    }, [dataKey, storeData.contacts]);
+    const dataSource = useContactsDS(dataKey);
 
-
-
-    const contactToRep = useCallback((firstName, role, phone) => {
-        if (!school) {
-            console.error('Cannot find the school of this contact');
-            return;
-        }
-        storeMethods.updateSchool(school.id, {...school,
-            representative: `${firstName}${role ? ' ' + role : ''}#whatsapp://send/?phone=${(phone.startsWith('972') ? '': '972') + phone}#`});
-    }, [storeMethods, school]);
-
-    const turnRepButton = useCallback(({ value }) => {
-        return (
-            <Button
-                text={pageText.turnRep}
-                onClick={_event => {contactToRep(value.firstName, value.role, value.phone);}}
-                className={'noPaddingButton' + (value.isRep ? ' repBtn' : '')}
-                disabled={value.isRep}
-            />
-        );
-    }, [contactToRep]);
-
-    // Calculation of the cell value for the turn rep column
-    const turnRepCellValue = useCallback(data => ({
-        firstName: data.firstName,
-        role: data.role,
-        phone: data.phone,
-        isRep: school.representative &&
-            (data.role ?
-                (new RegExp(`^${data.firstName}\\s+${data.role}(.*)`)).test(school.representative) :
-                data.firstName === school.representative.split('#')[0])
-    }), [school]);
+    // Turn to rep column logic
+    const [turnRepCellRender, turnRepCalculateCellValue] = useRep(school);
 
     const [resourceNameCellRender, addContactGoogleAndStore,
         deleteContactGoogleAndStore, updateContactGoogleAndStore] = useGoogleContactActions();
 
-    const handleRowInserting = useCallback(event => {
-        const contact = new Contact({...event.data, schoolId: dataKey, schoolName: school.name});
-        const isCanceled = new Promise(resolve => {
-            addContactGoogleAndStore(contact, school)
-                .then((validationResult) => {
-                    resolve(!validationResult);
-                });
-        });
-        event.cancel = isCanceled;
-    }, [addContactGoogleAndStore, dataKey, school]);
-
-    const handleRowRemoving = useCallback(event => {
-        const isCanceled = new Promise(resolve => {
-            deleteContactGoogleAndStore(event.key, event.data.googleContactsResourceName) 
-                .then((validationResult) => {
-                    resolve(!validationResult);
-                });
-        });
-        event.cancel = isCanceled;
-    }, [deleteContactGoogleAndStore]);
-
-    const handleRowUpdating = useCallback(event => {
-        const contact = new Contact({...event.oldData, ...event.newData});
-        const isCanceled = new Promise(resolve => {
-            updateContactGoogleAndStore(event.key, contact, school)
-                .then((validationResult) => {
-                    resolve(!validationResult);
-                });
-        });
-        event.cancel = isCanceled;
-    }, [updateContactGoogleAndStore, school]);
-
-
-
-    // The whatsapp column doesn't come from the data source itself, but rather needs to be computed
-    const whatsappCellValue = useCallback(data => {
-        if (data.firstName && data.phone) {
-            let text = data.firstName;
-            if (data.role) {
-                text += ` ${data.role}`;
-            }
-            return `${text}#whatsapp://send/?phone=${data.phone}#`;
-        } else {
-            return null;
-        }
-    }, []);
-
-
+    const [handleRowInserting, handleRowRemoving, handleRowUpdating] =
+        handleCurrentRowAction(school, addContactGoogleAndStore,
+        deleteContactGoogleAndStore, updateContactGoogleAndStore);
 
     return (
         <div className='contactsSubgridContainer'>
@@ -173,8 +93,8 @@ const ContactsSubgrid = ({ data }) => {
 
                     <Column
                         caption={pageText.turnRep}
-                        calculateCellValue={turnRepCellValue}
-                        cellRender={turnRepButton}
+                        calculateCellValue={turnRepCalculateCellValue}
+                        cellRender={turnRepCellRender}
                         allowEditing={false}
                         width={80}
                     >
@@ -204,7 +124,7 @@ const ContactsSubgrid = ({ data }) => {
                         dataType='string'
                         caption={pageText.whatsapp}
                         cellRender={WhatsappCell}
-                        calculateCellValue={whatsappCellValue}
+                        calculateCellValue={calculateWhatsappCellValue}
                         allowEditing={false}
                     >
                         <FormItem visible={false} />
@@ -229,15 +149,5 @@ const ContactsSubgrid = ({ data }) => {
         </div>
     );
 };
-
-function getContacts(contacts, key) {
-    return new DataSource({
-        store: new ArrayStore({
-            data: contacts,
-            key: 'id',
-        }),
-        filter: ['schoolId', '=', key],
-    });
-}
 
 export default ContactsSubgrid;

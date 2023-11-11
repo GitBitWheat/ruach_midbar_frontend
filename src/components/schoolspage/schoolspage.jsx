@@ -11,7 +11,7 @@ import DataGrid,
     { Column, Editing, Paging, HeaderFilter, MasterDetail,
       ColumnChooser, ColumnFixing, StateStoring, Toolbar, Item }
     from "devextreme-react/data-grid";
-import ContactsSubgrid from "./contactssubgrid";
+import ContactsSubgrid from "./contactssubgrid/contactssubgrid";
 import WhatsappCell from '../customcells/whatsappcell/whatsappcell';
 import WhatsappEditCell from '../customcells/whatsappcell/whatsappeditcell';
 
