@@ -67,11 +67,21 @@ const preparePlan = plan => (
     })
 );
 
-// State storing of the data grids - don't save filter values
+// State storing of the data grids - don't save filter values,
+// or sorting state, other than ascending sorting on dists column by default
 const noFilterValuesStateHandle = storageKey => [
     state => {
         state.columns
-        .forEach(col => { delete col.filterValues; });
+        .forEach(col => {
+            delete col.filterValues;
+            if (col.name === 'dist') {
+                col.sortIndex = 0;
+                col.sortOrder = 'asc';
+            } else {
+                delete col.sortIndex;
+                delete col.sortOrder;
+            }
+        });
         localStorage.setItem(storageKey, JSON.stringify(state));
     }, () => {
         return JSON.parse(localStorage.getItem(storageKey));
@@ -144,6 +154,20 @@ const updateBtnFltrs = (event, colIdx, btnCtrls) => {
     }
 };
 
+// Sorting method of the dist column. Null values are treated as infinity.
+const distColSortingMethod = (val1, val2) => {
+    if (val1 === val2) {
+        return 0;
+    }
+    if (!(!!val1)) {
+        return 1;
+    }
+    if (!(!!val2)) {
+        return -1;
+    }
+    return val1 > val2 ? 1 : -1;
+};
+
 const PlacementsPage = () => {
 
     const storeCtx = useContext(SchoolsContext);
@@ -172,6 +196,9 @@ const PlacementsPage = () => {
 
     const [optionsDS, setOptionsDS] = useState([]);
     const [candidatesDS, setCandidatesDS] = useState([]);
+
+    const optionsDataGridRef = useRef();
+    const candidatesDataGridRef = useRef();
 
     // Recalculate the data sources from scratch when the selected plan or list of instructors changes
     useEffect(() => {
@@ -215,12 +242,28 @@ const PlacementsPage = () => {
                 )
             : {});
         })();
-    }, [selectedPlan, storeData.instructors]);
+    }, [selectedPlan]);
 
     const distCalculateCellValue = useCallback(
         data => (selectedPlan && selectedPlan.city === data.city) ? 0 : (dists[data.city] || null),
         [selectedPlan, dists]
     );
+
+    // Refreshes grids when dists are loaded
+    useEffect(() => {
+        if (optionsDataGridRef && optionsDataGridRef.current) {
+            /** @type {DataGrid} */
+            const dg = optionsDataGridRef.current;
+            dg.instance.clearSorting();
+            dg.instance.columnOption('dist', 'sortOrder', 'asc');
+        }
+        if (candidatesDataGridRef && candidatesDataGridRef.current) {
+            /** @type {DataGrid} */
+            const dg = candidatesDataGridRef.current;
+            dg.instance.clearSorting();
+            dg.instance.columnOption('dist', 'sortOrder', 'asc');
+        }
+    }, [dists]);
 
     // Plan message template
     const [msg, setMsg] = useState('');
@@ -289,7 +332,6 @@ const PlacementsPage = () => {
 
     /* Button filters for the options table */
     const [areaFltrsCtrls, typeFltrsCtrls] = useOptionsFilters();
-    const optionsDataGridRef = useRef();
 
     useEffect(() => {
         updateDGFltrs(optionsDataGridRef, areaFltrsCtrls.fltrs, 'area');
@@ -308,12 +350,15 @@ const PlacementsPage = () => {
     const instructorColumns = () => [
         <Column
             key="dist"
+            name="dist"
             dataType="number"
             caption={pageText.dist}
             calculateCellValue={distCalculateCellValue}
             allowEditing={false}
             allowFiltering={false}
+            allowSorting={true}
             sortOrder="asc"
+            sortingMethod={distColSortingMethod}
         />,
         <Column
             key="firstName"
@@ -475,6 +520,7 @@ const PlacementsPage = () => {
                 </div>
                 <div className="placementsTableContainer">
                     <DataGrid
+                        ref={candidatesDataGridRef}
                         dataSource={candidatesDS}
                         keyExpr='id'
                         hoverStateEnabled={true}
