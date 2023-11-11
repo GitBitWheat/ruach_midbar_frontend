@@ -87,10 +87,10 @@ const noFilterValuesStateHandle = storageKey => [
         return JSON.parse(localStorage.getItem(storageKey));
     }
 ];
-const optionsStorageKey = 'optionsDataGridStateStoring';
-const candidatesStorageKey = 'candidatesDataGridStateStoring';
-const [saveOptionsDataGridState, loadOptionsDataGridState] = noFilterValuesStateHandle(optionsStorageKey);
-const [saveCandidatesDataGridState, loadCandidatesDataGridState] = noFilterValuesStateHandle(candidatesStorageKey);
+const [saveOptionsDataGridState, loadOptionsDataGridState] =
+    noFilterValuesStateHandle('optionsDataGridStateStoring');
+const [saveCandidatesDataGridState, loadCandidatesDataGridState] =
+    noFilterValuesStateHandle('candidatesDataGridStateStoring');
 
 /**
  * Update DataGrid filters according to the button filters controls
@@ -331,7 +331,10 @@ const PlacementsPage = () => {
     );
 
     /* Button filters for the options table */
-    const [areaFltrsCtrls, typeFltrsCtrls] = useOptionsFilters();
+    const [areaFltrsCtrls, typeFltrsCtrls] = useOptionsFilters(
+        selectedPlanId ? `${selectedPlanId}_area_fltrs` : null,
+        selectedPlanId ? `${selectedPlanId}_type_fltrs` : null
+    );
 
     useEffect(() => {
         updateDGFltrs(optionsDataGridRef, areaFltrsCtrls.fltrs, 'area');
