@@ -7,11 +7,11 @@ import DataGrid,
 import { SelectBox } from 'devextreme-react';
 
 import WhatsappCell from '../customcells/whatsappcell/whatsappcell';
-import { whatsappCellValue } from '../contactspage/contactspage';
+import { calculateWhatsappCellValue } from '../contactspage/misc/calculatewhatsappcellvalue';
 
 import LinkCell from '../customcells/linkcell/linkcell';
 import LinkEditCell from '../customcells/linkcell/linkeditcell';
-import InstructorsCellRender from '../customcells/instructorscellrender';
+import InstructorsCellRender from '../planspage/misc/instructorscellrender';
 
 import Payment from '../../store/storeModels/payment';
 import { SchoolsContext } from '../../store/SchoolsContextProvider';
@@ -23,8 +23,6 @@ import settingsConstants from '../../utils/settingsconstants.json';
 import pageText from './paymentspagetext.json';
 import './paymentspage.css';
 import useSelectBox, { useSelectBoxOptions } from '../../customhooks/useselectbox/useselectbox';
-
-
 
 const PaymentsPage = () => {
 
@@ -339,7 +337,7 @@ const PaymentsPage = () => {
                             caption={pageText.whatsapp}
                             dataType='string'
                             cellRender={WhatsappCell}
-                            calculateCellValue={whatsappCellValue}
+                            calculateCellValue={calculateWhatsappCellValue}
                         />
                     </DataGrid>
 

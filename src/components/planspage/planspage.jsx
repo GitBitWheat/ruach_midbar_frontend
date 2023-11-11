@@ -27,7 +27,7 @@ import NumberEditCell from '../customcells/numbereditcell/numbereditcell';
 import NumberLookupEditCell from '../customcells/numberlookupeditcell/numberlookupeditcell';
 import ComboEditCell from '../customcells/comboeditcell/comboeditcell';
 import SelectEditCell from '../customcells/selecteditcell/selecteditcell';
-import InstructorsCellRender from '../customcells/instructorscellrender.jsx';
+import InstructorsCellRender from './misc/instructorscellrender.jsx';
 
 import { SchoolsContext } from '../../store/SchoolsContextProvider'
 import { SettingsContext } from '../settingscontext/settingscontext';

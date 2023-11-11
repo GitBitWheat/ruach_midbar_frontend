@@ -2,8 +2,6 @@ import { useState } from 'react';
 
 import { Typeahead } from 'react-bootstrap-typeahead';
 
-
-
 const SearchBar = ({ barName, placeholder = '', setter = _ => {}, options, labelKey = val => `${val}`, menuItemAddition = _ => '', noChangeWhenNoneSelected = false,
     defaultSelected, defaultInputValue, noneSelectedValue = '', width = null, detectInputChanges = false, className, style : styleProp }) => {
 

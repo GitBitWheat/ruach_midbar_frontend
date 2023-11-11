@@ -7,12 +7,13 @@ import { Button } from 'devextreme-react';
 import ArrayStore from 'devextreme/data/array_store';
 import DataSource from 'devextreme/data/data_source';
 
+import useGoogleContactActions from '../../customhooks/usegooglecontactactions/usegooglecontactactions';
+
 import WhatsappCell from '../customcells/whatsappcell/whatsappcell';
 
 import { SchoolsContext } from '../../store/SchoolsContextProvider';
 import { SettingsContext } from '../settingscontext/settingscontext';
 import Contact from '../../store/storeModels/contact';
-import useContactActions from './usecontactactions';
 
 import settingsConstants from '../../utils/settingsconstants.json';
 import pageText from './schoolspagetext.json';
@@ -74,7 +75,7 @@ const ContactsSubgrid = ({ data }) => {
     }), [school]);
 
     const [resourceNameCellRender, addContactGoogleAndStore,
-        deleteContactGoogleAndStore, updateContactGoogleAndStore] = useContactActions();
+        deleteContactGoogleAndStore, updateContactGoogleAndStore] = useGoogleContactActions();
 
     const handleRowInserting = useCallback(event => {
         const contact = new Contact({...event.data, schoolId: dataKey, schoolName: school.name});

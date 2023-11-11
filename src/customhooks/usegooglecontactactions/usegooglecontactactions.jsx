@@ -1,9 +1,10 @@
-import { useContext, useCallback } from "react";
+import { useContext } from "react";
 import { SchoolsContext } from "../../store/SchoolsContextProvider";
-import { deleteGoogleContactRequest, updateGoogleContactRequest, uploadToGoogleContacts } from '../../utils/localServerRequests';
+import { deleteGoogleContactRequest, updateGoogleContactRequest, uploadToGoogleContacts }
+    from '../../utils/localServerRequests';
 import { Button } from 'devextreme-react';
-import pageText from './schoolspagetext.json';
-import './schoolspage.css';
+import pageText from '../../components/schoolspage/schoolspagetext.json';
+import './usegooglecontactactions.css';
 
 const noGoogleContactButtonRender = () => (
     <span className='dataError'>
@@ -14,13 +15,13 @@ const deleteGoogleContactOnlyButtonRender = () => (
     <span>X</span>
 );
 
-const useContactActions = () => {
+const useGoogleContactActions = () => {
 
     const storeCtx = useContext(SchoolsContext);
     const storeLookupData = storeCtx.lookupData;
     const storeMethods = storeCtx.methods;
 
-    const addGoogleContactForExistingContact = useCallback((contactId, contact) => async () => {
+    const addGoogleContactForExistingContact = (contactId, contact) => async () => {
         const school = storeLookupData.schools.get(contact.schoolId);
         if (contact.firstName && contact.role && contact.phone &&
             school && school.level && school.name && school.city) {
@@ -40,9 +41,9 @@ const useContactActions = () => {
         } else {
             alert(pageText.notEnoughParameters);
         }
-    }, [storeMethods, storeLookupData.schools]);
+    };
 
-    const removeOnlyGoogleContact = useCallback((contactId, contact) => async () => {
+    const removeOnlyGoogleContact = (contactId, contact) => async () => {
         if (contact.googleContactsResourceName) {
             if (await deleteGoogleContactRequest(
                     contact.googleContactsResourceName.replace('people/', '')
@@ -55,9 +56,9 @@ const useContactActions = () => {
                 alert(pageText.failedDeleteGoogleContact);
             }
         }
-    }, [storeMethods]);
+    };
 
-    const resourceNameCellRender = useCallback(({ value, key, data }) => value ? (
+    const resourceNameCellRender = ({ value, key, data }) => value ? (
         <span>
             <a
                 href={`https://contacts.google.com/person/${value.replace('people/', '')}`}
@@ -79,9 +80,9 @@ const useContactActions = () => {
             onClick={addGoogleContactForExistingContact(key, data)}
             className='noPaddingButton'
         />
-    ), [addGoogleContactForExistingContact, removeOnlyGoogleContact]);
+    );
 
-    const addContactGoogleAndStore = useCallback(async (contact, school) => {
+    const addContactGoogleAndStore = async (contact, school) => {
         if (contact.firstName && contact.role && contact.phone &&
             school && school.level && school.name && school.city) {
             const googleContactData = await uploadToGoogleContacts(
@@ -100,18 +101,18 @@ const useContactActions = () => {
             alert(pageText.notEnoughParameters);
             return await storeMethods.addContact(contact);
         }
-    }, [storeMethods]);
+    };
 
-    const deleteContactGoogleAndStore = useCallback(async (contactId, resourceName) => {
+    const deleteContactGoogleAndStore = async (contactId, resourceName) => {
         if (resourceName) {
             if (!await deleteGoogleContactRequest(resourceName.replace('people/', ''))) {
                 alert(pageText.failedDeleteGoogleContact);
             }
         }
         return await storeMethods.deleteContact(contactId);
-    }, [storeMethods]);
+    };
 
-    const updateContactGoogleAndStore = useCallback(async (contactId, contact, school) => {
+    const updateContactGoogleAndStore = async (contactId, contact, school) => {
         if (contact.googleContactsResourceName && contact.firstName && contact.role && contact.phone &&
             school && school.level && school.name && school.city) {
             if (!await updateGoogleContactRequest(
@@ -123,10 +124,10 @@ const useContactActions = () => {
             }
         }
         return await storeMethods.updateContact(contactId, contact);
-    }, [storeMethods]);
+    };
 
     return [resourceNameCellRender, addContactGoogleAndStore,
         deleteContactGoogleAndStore, updateContactGoogleAndStore];
 };
 
-export default useContactActions;
+export default useGoogleContactActions;
