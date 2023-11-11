@@ -1,6 +1,6 @@
-import { useState, useEffect, useContext, useCallback } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import Circle from '@uiw/react-color-circle';
-import { SchoolsContext } from '../../../store/SchoolsContextProvider';
+import { SchoolsContext } from '../../../../store/SchoolsContextProvider';
 import './usecolors.css';
 
 const whiteHex = '#ffffff';
@@ -9,6 +9,7 @@ const useColors = (selectedPlanId, candidatesDS) => {
 
     const storeCtx = useContext(SchoolsContext);
     const storeData = storeCtx.data;
+    const storeLookupData = storeCtx.lookupData;
     const storeMethods = storeCtx.methods;
 
     // Map from instructor id to its corresponding color according to the selected plan
@@ -20,9 +21,8 @@ const useColors = (selectedPlanId, candidatesDS) => {
             .map(ipColor => [ipColor.instructorId, ipColor.colorId])));
     }, [storeData.instructorPlanColors, selectedPlanId]);
 
-    const instructorToColorHex = useCallback(instructorId => instructorId in instructorToColorId ?
-        storeData.colors.find(color => color.id === instructorToColorId[instructorId]).hex : whiteHex,
-    [storeData.colors, instructorToColorId]);
+    const instructorToColorHex = instructorId => instructorId in instructorToColorId ?
+        storeLookupData.colors.get(instructorToColorId[instructorId]).hex : whiteHex;
     
     // Map each color id to the next
     const [candidateColorIds, setCandidateColorIds] = useState(new Map());
@@ -64,39 +64,36 @@ const useColors = (selectedPlanId, candidatesDS) => {
         setOptionalColorIds(optionalColorIdMap);
     }, [storeData.colors]);
 
-    const switchColorClickEvent = useCallback(
-        /**
-         * Template for a click event handler of the color circle. Switches to the next color.
-         * @param {Number} key Id of the instructor
-         * @param {Map} colorIds A map that is used like a "linked list" for the colors. Switching a color means
-         * switching to the next color by the map, i.e. a key in the map is a color id and the value is the id of
-         * the next color.
-         */
-        (key, colorIds) =>
-            /** @param {React.MouseEventHandler<HTMLDivElement>} event */
-            event => {
-                event.preventDefault();
-                event.stopPropagation();
+    /**
+     * Template for a click event handler of the color circle. Switches to the next color.
+     * @param {Number} key Id of the instructor
+     * @param {Map} colorIds A map that is used like a "linked list" for the colors. Switching a color means
+     * switching to the next color by the map, i.e. a key in the map is a color id and the value is the id of
+     * the next color.
+     */
+    const switchColorClickEvent = (key, colorIds) =>
+        /** @param {React.MouseEventHandler<HTMLDivElement>} event */
+        event => {
+            event.preventDefault();
+            event.stopPropagation();
 
-                const hasColor = key in instructorToColorId;
-                const newColorId = colorIds.get(hasColor ? instructorToColorId[key] : -1);
-                if (!hasColor) {
-                    if (newColorId !== -1) {
-                        storeMethods.addInstructorPlanColor(key, selectedPlanId, newColorId);
-                    }
+            const hasColor = key in instructorToColorId;
+            const newColorId = colorIds.get(hasColor ? instructorToColorId[key] : -1);
+            if (!hasColor) {
+                if (newColorId !== -1) {
+                    storeMethods.addInstructorPlanColor(key, selectedPlanId, newColorId);
                 }
-                else if (newColorId !== -1) {
-                    storeMethods.updateInstructorPlanColor(key, selectedPlanId, newColorId);
-                }
-                else {
-                    storeMethods.deleteInstructorPlanColor(key, selectedPlanId);
-                }
-        },
-        [instructorToColorId, selectedPlanId, storeMethods]
-    );
+            }
+            else if (newColorId !== -1) {
+                storeMethods.updateInstructorPlanColor(key, selectedPlanId, newColorId);
+            }
+            else {
+                storeMethods.deleteInstructorPlanColor(key, selectedPlanId);
+            }
+        };
 
     // Cell render functions for the color circle columns in the candidate and optional instructor datagrids
-    const candidateCellRender = useCallback(({ key }) => {
+    const candidateCellRender = ({ key }) => {
         const candidateSwitchColorClickEvent = switchColorClickEvent(key, candidateColorIds);
         return (
             <Circle
@@ -105,9 +102,9 @@ const useColors = (selectedPlanId, candidatesDS) => {
                 className='centeredColor'
             />
         );
-    }, [instructorToColorHex, switchColorClickEvent, candidateColorIds]);
+    };
 
-    const optionalCellRender = useCallback(({ key }) => {
+    const optionalCellRender = ({ key }) => {
         const optionalSwitchColorClickEvent = switchColorClickEvent(key, optionalColorIds);
         return (
             <Circle
@@ -116,10 +113,10 @@ const useColors = (selectedPlanId, candidatesDS) => {
                 className='centeredColor'
             />
         );
-    }, [instructorToColorHex, switchColorClickEvent, optionalColorIds]);
+    };
 
     // Switch the color of selected candidate instructors (the action property) to default
-    const candidatesSwitchColorToDefault = useCallback(() => {
+    const candidatesSwitchColorToDefault = () => {
         for (const placedInstructor of candidatesDS) {
             if (placedInstructor.action) {
                 if (placedInstructor.id in instructorToColorId) {
@@ -129,10 +126,10 @@ const useColors = (selectedPlanId, candidatesDS) => {
                 }
             }
         }
-    }, [candidatesDS, candidateColorDefault, selectedPlanId, storeMethods, instructorToColorId]);
+    };
 
     // Switch the color of an optional instructor (the action property) to default
-    const optionSwitchColorToDefault = useCallback((instId) => {
+    const optionSwitchColorToDefault = instId => {
         storeMethods.deleteInstructorPlacement(instId, selectedPlanId);
 
         if (instId in instructorToColorId) {
@@ -140,12 +137,12 @@ const useColors = (selectedPlanId, candidatesDS) => {
         } else {
             storeMethods.addInstructorPlanColor(instId, selectedPlanId, optionalColorDefault);
         }
-    }, [optionalColorDefault, selectedPlanId, storeMethods, instructorToColorId]);
+    };
 
     // Delete color of instructor
-    const deleteColor = useCallback(instId => {
+    const deleteColor = instId => {
         storeMethods.deleteInstructorPlanColor(instId, selectedPlanId);
-    }, [storeMethods, selectedPlanId]);
+    };
 
     return [candidateCellRender, optionalCellRender, candidatesSwitchColorToDefault,
         optionSwitchColorToDefault, deleteColor];

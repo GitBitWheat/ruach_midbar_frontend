@@ -473,7 +473,6 @@ export async function getDistanceRequest(origin) {
         const response = await api.post(
             'http://localhost:8000/city_distances/', serializedData, config
         );
-        console.log(response);
         return response.data.dists;
     } catch (error) {
         console.error(error);
@@ -811,7 +810,6 @@ export async function updatePlanRequest(planId, planData) {
         },
         timeout: 60 * 1000 // 60 seconds
     };
-
 
     try {
         await api.post('http://localhost:8000/updateplan/', serializedData, config);

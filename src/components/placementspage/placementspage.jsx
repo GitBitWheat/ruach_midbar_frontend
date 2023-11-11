@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useCallback, useRef } from "react";
+import { useEffect, useContext, useRef } from "react";
 import { DataGrid, HeaderFilter, Column, ColumnChooser, ColumnFixing, StateStoring, Editing }
     from 'devextreme-react/data-grid';
 import { Button, TextArea } from "devextreme-react";
@@ -11,349 +11,111 @@ import PlanMenu from "../planmenu/planmenu";
 
 import { SchoolsContext } from "../../store/SchoolsContextProvider";
 import areas from '../../static/instructor_areas.json';
-import { getDistanceRequest, messagesRequest } from "../../utils/localServerRequests";
-import { symmDiff } from "../../utils/arrayUtils";
 import { dataGridRowLongClick } from "../../utils/datagridrowlongclick";
 import { dataGridRightOnContentReady } from "../../utils/datagridrightoncontentready";
 
-import useColors from "./usecolors/usecolors";
+import useColors from "./hooks/usecolors/usecolors";
 import ButtonFilters from "./optionsfilters/buttonfilters";
 import useOptionsFilters from "./optionsfilters/useoptionsfilters";
+import useLinkDataSource from "../../customhooks/uselinkdatasource";
+import usePlanSelect from "./hooks/useplanselect";
+import useInstDataSources from "./hooks/useinstdatasources";
+import useDists, { updateDGFltrs, updateBtnFltrs } from "./hooks/usedists";
+import { noFilterValuesStateHandle } from "./misc/nofiltervaluesstatehandle";
+import { distColSortingMethod } from "./misc/distcolsortingmethod";
+import usePlanMsg from "./hooks/useplanmsg";
+import usePlaceCandidates from "./hooks/useplacecandidates";
 
 import settingsConstants from '../../utils/settingsconstants.json';
 import pageText from './placementspagetext.json';
 import './placementspage.css';
-import useLinkDataSource from "../../customhooks/uselinkdatasource";
-
-/**
- * Calculate the instructor data sources (the options and the placed candidates)
- * @param {Plan} selectedPlan 
- * @param {Array} instructors 
- * @param {Array} instructorPlacements 
- */
-const calculateDataSources = (selectedPlan, instructors, instructorPlacements) => {
-    if (selectedPlan) {
-        const newCandidatesDSIds = instructorPlacements
-            .filter(placement => placement.planId === selectedPlan.id)
-            .map(placement => placement.instructorId);
-        
-        const newOptionsDS = [];
-        const newCandidatesDS = [];
-
-        for (const inst of instructors) {
-            if (newCandidatesDSIds.includes(inst.id)) {
-                newCandidatesDS.push({...inst, action: false});
-            } else {
-                newOptionsDS.push({...inst, action: false});
-            }
-        }
-
-        return [newOptionsDS, newCandidatesDS];
-
-    } else {
-        return [[], []];
-    }
-};
 
 const areasHeaderFilterDS = areas.map(area => ({
     text: area.text,
     value: ['area', 'contains', area.value]
 }));
 
-const preparePlan = plan => (
-    (({ instructor1, instructor2, instructor3, instructor4, ...rest }) => rest)({
-        ...plan,
-        instructors: [plan.instructor1, plan.instructor2, plan.instructor3, plan.instructor4]
-        .filter(instructor => instructor)
-    })
-);
-
-// State storing of the data grids - don't save filter values,
-// or sorting state, other than ascending sorting on dists column by default
-const noFilterValuesStateHandle = storageKey => [
-    state => {
-        state.columns
-        .forEach(col => {
-            delete col.filterValues;
-            if (col.name === 'dist') {
-                col.sortIndex = 0;
-                col.sortOrder = 'asc';
-            } else {
-                delete col.sortIndex;
-                delete col.sortOrder;
-            }
-        });
-        localStorage.setItem(storageKey, JSON.stringify(state));
-    }, () => {
-        return JSON.parse(localStorage.getItem(storageKey));
-    }
-];
 const [saveOptionsDataGridState, loadOptionsDataGridState] =
     noFilterValuesStateHandle('optionsDataGridStateStoring');
 const [saveCandidatesDataGridState, loadCandidatesDataGridState] =
     noFilterValuesStateHandle('candidatesDataGridStateStoring');
 
-/**
- * Update DataGrid filters according to the button filters controls
- * @param {import("react").RefObject} dgRef 
- * @param {Object} btnFltrs 
- * @param {String} dataField 
- */
-const updateDGFltrs = (dgRef, btnFltrs, dataField) => {
-    if (dgRef && dgRef.current) {
-        /** @type {DataGrid} */
-        const dg = dgRef.current;
-    
-        // If the filterValues already match the button filters - do not update them.
-        // It is possible the filterValues were updated via the datagrid menu, and as
-        // a result this function called was by a useEffect. Prevent an infinite loop.
-        const gridFltrExprs = dg.instance.columnOption(dataField, 'filterValues') || [];
-        const gridEnabledFltrs =
-            (gridFltrExprs.length && !Array.isArray(gridFltrExprs)) ?
-            gridFltrExprs[2] : gridFltrExprs.map(fltrExpr => fltrExpr[2]);
-        const fltrsCp = {...btnFltrs};
-        for (const fltr of gridEnabledFltrs) {
-            delete fltrsCp[fltr];
-        }
-        if (gridEnabledFltrs.every(fltr => btnFltrs[fltr]) &&
-            Object.values(fltrsCp).every(active => !active)) {
-            return;
-        }
-    
-        const filterValues = Object.entries(btnFltrs)
-            .filter(([_value, active]) => active)
-            .map(([value, _active]) => [dataField, 'contains', value]);
-        dg.instance.columnOption(dataField, 'filterValues', filterValues);
-    }
-};
-
-/**
- * Update button filters according to the datagrid filterValues
- * @param {import('devextreme/ui/data_grid').OptionChangedEvent} event 
- * @param {Number} colIdx 
- * @param {import('./optionsfilters/buttonfilters').ButtonFiltersControls} btnCtrls 
- */
-const updateBtnFltrs = (event, colIdx, btnCtrls) => {
-    if (event.fullName === `columns[${colIdx}].filterValues`) {
-        let value = event.value || [];
-        // If only a single filter has been selected, the filter values
-        // array will be its filter expression, instead of a combination
-        if (value.length && !Array.isArray(value[0])) {
-            value = [value];
-        }
-        // Turning filter expressions to values
-        value = value.map(fltrExpr => fltrExpr[2]);
-
-        btnCtrls.boolSwitch(
-            symmDiff(
-                value,
-                Object.entries(btnCtrls.fltrs)
-                .filter(([_value, active]) => active)
-                .map(([value, _active]) => value)
-            )
-        );
-    }
-};
-
-// Sorting method of the dist column. Null values are treated as infinity.
-const distColSortingMethod = (val1, val2) => {
-    if (val1 === val2) {
-        return 0;
-    }
-    if (!(!!val1)) {
-        return 1;
-    }
-    if (!(!!val2)) {
-        return -1;
-    }
-    return val1 > val2 ? 1 : -1;
-};
-
 const PlacementsPage = () => {
 
     const storeCtx = useContext(SchoolsContext);
-    const storeData = storeCtx.data;
-    const storeLookupData = storeCtx.lookupData;
     const storeMethods = storeCtx.methods;
 
-    const [selectedPlan, setSelectedPlan] = useState(null);
-    const [selectedPlanId, setSelectedPlanId] = useState(null);
-    const handlePlanChange = useCallback(plan => {
-        setSelectedPlanId(plan.id);
-    }, []);
-    useEffect(() => {
-        if (selectedPlanId) {
-            const p = storeData.plans.find(p => p.id === selectedPlanId);
-            if (p) {
-                const school = storeLookupData.schools.get(p.schoolId);
-                if (school) {
-                    setSelectedPlan({...preparePlan(p), city: school.city});
-                } else {
-                    setSelectedPlan(preparePlan(p));
-                }
-            }
-        }
-    }, [storeLookupData.schools, selectedPlanId, storeData.plans, handlePlanChange]);
+    const [selectedPlan, handlePlanChange] = usePlanSelect();
 
-    const [optionsDS, setOptionsDS] = useState([]);
-    const [candidatesDS, setCandidatesDS] = useState([]);
+    const optionsDGRef = useRef();
+    const candidatesDGRef = useRef();
 
-    const optionsDataGridRef = useRef();
-    const candidatesDataGridRef = useRef();
-
-    // Recalculate the data sources from scratch when the selected plan or list of instructors changes
-    useEffect(() => {
-        const [newOptionsDS, newCandidatesDS] =
-            calculateDataSources(selectedPlan, storeData.instructors, storeData.instructorPlacements);
-        setOptionsDS(newOptionsDS);
-        setCandidatesDS(newCandidatesDS);
-    }, [selectedPlan, storeData.instructors, storeData.instructorPlacements]);
+    const [optionsDS, candidatesDS] = useInstDataSources(selectedPlan);
 
     // Instructor color functionality
     const [candidateColorColCellRender, optionalColorColCellRender,
         candidatesSwitchColorToDefault, optionSwitchColorToDefault, deleteColor] =
-        useColors(selectedPlanId, candidatesDS);
+        useColors(selectedPlan && selectedPlan.id, candidatesDS);
 
-    // Handlers of turning instructors to candidates and options - datagrid on row click event handlers
-    const turnToCandidate = useCallback(data => {
-        const aip = storeMethods.addInstructorPlacement;
-        aip(data.id, selectedPlan.id);
+    // Handlers of turning instructors to candidates and options
+    const turnToCandidate = data => {
+        storeMethods.addInstructorPlacement(data.id, selectedPlan && selectedPlan.id);
 
         // After turning an instructor to a candidate, delete their color
         deleteColor(data.id);
-    }, [selectedPlan, storeMethods.addInstructorPlacement, deleteColor]);
+    };
     const optionsRowPreparedHandler = dataGridRowLongClick(turnToCandidate);
 
-    const turnToOptional = useCallback(data => {
-        const dip = storeMethods.deleteInstructorPlacement;
-        dip(data.id, selectedPlan.id);
+    const turnToOptional = data => {
+        storeMethods.deleteInstructorPlacement(data.id, selectedPlan && selectedPlan.id);
 
         // After turning an instructor to optional, give them the default option color
         optionSwitchColorToDefault(data.id);
-    }, [selectedPlan, storeMethods.deleteInstructorPlacement, optionSwitchColorToDefault]);
+    };
     const candidatesRowPreparedHandler = dataGridRowLongClick(turnToOptional);
 
-    // Distances object
-    const [dists, setDists] = useState({});
-    useEffect(() => {
-        (async () => {
-            setDists(selectedPlan && selectedPlan.city ?
-                await getDistanceRequest(
-                    selectedPlan.city
-                )
-            : {});
-        })();
-    }, [selectedPlan]);
+    // Distances and plan messages logic
+    const distCalculateCellValue = useDists(selectedPlan, optionsDGRef, candidatesDGRef);
+    const [msg, handleMsgInput, updatePlanMsg, sendMsgToCandidates] = usePlanMsg(selectedPlan, candidatesDS);
 
-    const distCalculateCellValue = useCallback(
-        data => (selectedPlan && selectedPlan.city === data.city) ? 0 : (dists[data.city] || null),
-        [selectedPlan, dists]
-    );
+    // Selected plan button functionalities
+    const sendMsgBtnClickHandler = _event => {
+        sendMsgToCandidates();
 
-    // Refreshes grids when dists are loaded
-    useEffect(() => {
-        if (optionsDataGridRef && optionsDataGridRef.current) {
-            /** @type {DataGrid} */
-            const dg = optionsDataGridRef.current;
-            dg.instance.clearSorting();
-            dg.instance.columnOption('dist', 'sortOrder', 'asc');
-        }
-        if (candidatesDataGridRef && candidatesDataGridRef.current) {
-            /** @type {DataGrid} */
-            const dg = candidatesDataGridRef.current;
-            dg.instance.clearSorting();
-            dg.instance.columnOption('dist', 'sortOrder', 'asc');
-        }
-    }, [dists]);
-
-    // Plan message template
-    const [msg, setMsg] = useState('');
-    useEffect(() => {
-        setMsg((selectedPlan && selectedPlan.msg) ? selectedPlan.msg : '');
-    }, [selectedPlan]);
-    const updatePlanMsg = useCallback(() => {
-        storeMethods.updatePlanMessage(selectedPlan.id, msg);
-    }, [storeMethods, selectedPlan, msg]);
-
-    /** Selected plan button functionalities */
-
-    const sendMessagesToInstructors = useCallback(_event => {
-        const filteredPlacedInstructors = candidatesDS.filter(cand => cand.action);
-        messagesRequest(msg, '', '', filteredPlacedInstructors.map(placedInstructor => placedInstructor.firstName.split('#')[1]),
-        filteredPlacedInstructors.map(placedInstructor => placedInstructor.firstName.split('#')[0]), '', null,
-        null, null, () => {});
-                
         // After sending messages to candidate instructors, switch their color to the default candidate color
         candidatesSwitchColorToDefault();
-    }, [msg, candidatesDS, candidatesSwitchColorToDefault]);
+    }
 
-    const placeCandidates = useCallback(_event => {
-        const instructorsLen = selectedPlan.instructors.length;
+    const [placeCandidates, cancelPlacement1, cancelPlacement2, cancelPlacement3, cancelPlacement4] =
+        usePlaceCandidates(selectedPlan, candidatesDS);
 
-        if (instructorsLen >= 4) {
-            alert(pageText.planIsFull);
-            return;
-        }
-
-        const instructorSlotsNum = 4;
-        const emptySlotsNum = instructorSlotsNum - instructorsLen;
-
-        const newInstructors = candidatesDS
-            .filter(pi => pi.action)
-            .map(pi => (pi.firstName || '') + (pi.lastName ? ' ' + pi.lastName : ''))
-
-        if (newInstructors.length > emptySlotsNum) {
-            alert(pageText.choseMoreCandidatesThanEmptySlots);
-            return;
-        }
-        else if (newInstructors.length === 0) {
-            alert(pageText.noChosenCandidates);
-            return;
-        }
-
-        storeMethods.placeCandidates(selectedPlan.id, newInstructors, instructorsLen + 1);
-    }, [candidatesDS, selectedPlan, storeMethods]);
-
-    const cancelPlacement1 = useCallback(
-        _event => storeMethods.cancelCandidatePlacement(selectedPlan.id, 1),
-        [selectedPlan, storeMethods]
-    );
-    const cancelPlacement2 = useCallback(
-        _event => storeMethods.cancelCandidatePlacement(selectedPlan.id, 2),
-        [selectedPlan, storeMethods]
-    );
-    const cancelPlacement3 = useCallback(
-        _event => storeMethods.cancelCandidatePlacement(selectedPlan.id, 3),
-        [selectedPlan, storeMethods]
-    );
-    const cancelPlacement4 = useCallback(
-        _event => storeMethods.cancelCandidatePlacement(selectedPlan.id, 4),
-        [selectedPlan, storeMethods]
-    );
-
-    /* Button filters for the options table */
+    // Button filters for the options table
     const [areaFltrsCtrls, typeFltrsCtrls] = useOptionsFilters(
-        selectedPlanId ? `${selectedPlanId}_area_fltrs` : null,
-        selectedPlanId ? `${selectedPlanId}_type_fltrs` : null
+        selectedPlan ? `${selectedPlan.id}_area_fltrs` : null,
+        selectedPlan ? `${selectedPlan.id}_type_fltrs` : null
     );
 
+    // Update datagrid filters according to the filter buttons
     useEffect(() => {
-        updateDGFltrs(optionsDataGridRef, areaFltrsCtrls.fltrs, 'area');
-    }, [areaFltrsCtrls.fltrs, optionsDataGridRef]);
+        updateDGFltrs(optionsDGRef, areaFltrsCtrls.fltrs, 'area');
+    }, [areaFltrsCtrls.fltrs, optionsDGRef]);
 
     useEffect(() => {
-        updateDGFltrs(optionsDataGridRef, typeFltrsCtrls.fltrs, 'instructorTypes');
-    }, [typeFltrsCtrls.fltrs, optionsDataGridRef]);
+        updateDGFltrs(optionsDGRef, typeFltrsCtrls.fltrs, 'instructorTypes');
+    }, [typeFltrsCtrls.fltrs, optionsDGRef]);
 
-    // On options datagrid filterValues change, update button controls
-    const optionsOptionChangedHandler = useCallback(event => {
+    /**
+     * On options datagrid filterValues change, update button controls
+     * @param {import('devextreme/ui/data_grid').OptionChangedEvent} event 
+     */
+    const optionsOptionChangedHandler = event => {
         updateBtnFltrs(event, 6, areaFltrsCtrls);
         updateBtnFltrs(event, 9, typeFltrsCtrls);
-    }, [areaFltrsCtrls, typeFltrsCtrls]);
+    };
 
     // firstName is a link value, and the header filter datasource is adjusted accordingly
-    const firstNameOptionsHeaderFilterDS = useLinkDataSource(optionsDS, 'firstName')
-    const firstNameCandidatesHeaderFilterDS = useLinkDataSource(candidatesDS, 'firstName')
+    const firstNameOptionsHeaderFilterDS = useLinkDataSource(optionsDS, 'firstName');
+    const firstNameCandidatesHeaderFilterDS = useLinkDataSource(candidatesDS, 'firstName');
 
     const distCol = () => (
         <Column
@@ -369,6 +131,7 @@ const PlacementsPage = () => {
             sortingMethod={distColSortingMethod}
         />
     );
+
     const firstNameCol = headerFilterDS => (
         <Column
             key="firstName"
@@ -381,6 +144,7 @@ const PlacementsPage = () => {
             <HeaderFilter dataSource={headerFilterDS}/>
         </Column>
     );
+
     const restInstCols = () => [
         <Column
             key="lastName"
@@ -446,14 +210,14 @@ const PlacementsPage = () => {
                     <TextArea
                         height={125}
                         value={msg}
-                        onChange={e => { setMsg(e.target.value) }}
+                        onInput={handleMsgInput}
                         disabled={!(!!selectedPlan)}
                     />
                     <div className="flex-row">
                         <Button
                             text={pageText.sendMessagesToInstructors}
                             icon="bi bi-send"
-                            onClick={sendMessagesToInstructors}
+                            onClick={sendMsgBtnClickHandler}
                             disabled={!(!!selectedPlan)}
                         />
                         <Button
@@ -503,7 +267,7 @@ const PlacementsPage = () => {
             <div className="placementsPageRow">
                 <div className="placementsTableContainer">
                     <DataGrid
-                        ref={optionsDataGridRef}
+                        ref={optionsDGRef}
                         dataSource={optionsDS}
                         keyExpr='id'
                         hoverStateEnabled={true}
@@ -537,7 +301,7 @@ const PlacementsPage = () => {
                 </div>
                 <div className="placementsTableContainer">
                     <DataGrid
-                        ref={candidatesDataGridRef}
+                        ref={candidatesDGRef}
                         dataSource={candidatesDS}
                         keyExpr='id'
                         hoverStateEnabled={true}

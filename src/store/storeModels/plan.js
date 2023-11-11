@@ -1,6 +1,6 @@
 class Plan {
     constructor({ id, year, proposal, status, invitation, level, sym, schoolId, institution, contact, date, district, city, plan,
-        days, day, weeks, grade, lessonsPerDay, lessons, pricePerHour, details }) {
+        days, day, weeks, grade, lessonsPerDay, lessons, pricePerHour, details, msg }) {
         this.id = id || null;
         this.year = year || null;
         this.proposal = proposal || null;
@@ -23,6 +23,7 @@ class Plan {
         this.lessons = lessons ? lessons : 0;
         this.pricePerHour = pricePerHour ? pricePerHour : 0;
         this.details = details || null;
+        this.msg = msg || null;
 
         this.overall = this.lessons && this.pricePerHour ? this.lessons * this.pricePerHour : 0;
     }

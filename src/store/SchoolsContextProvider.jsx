@@ -38,6 +38,8 @@ const SchoolsContextProvider = ({ children }) => {
     const [settings, setSettings] = useState({});
 
     const [schoolsLU, setSchoolsLU] = useState(new Map());
+    const [plansLU, setPlansLU] = useState(new Map());
+    const [colorsLU, setColorsLU] = useState(new Map());
 
     const data = {
         schools: schools,
@@ -67,7 +69,9 @@ const SchoolsContextProvider = ({ children }) => {
     };
 
     const lookupData = {
-        schools: schoolsLU
+        schools: schoolsLU,
+        plans: plansLU,
+        colors: colorsLU
     };
 
 
@@ -137,12 +141,14 @@ const SchoolsContextProvider = ({ children }) => {
 
     // Updating colored status of school and plan
     const updateColorOfColoredStatus = useCallback((colorId, hex) => {
-        setColors(colors.map(color => colorId === color.id ? {...color, hex: hex} : color));
-    }, [colors]);
+        setColors(colors.map(color => colorId === color.id ? { ...color, hex: hex } : color));
+        setColorsLU(new Map(colorsLU.set(colorId, { ...colorsLU.get(colorId), hex: hex })))
+    }, [colors, colorsLU]);
 
     const updateDescOfColoredStatus = useCallback((colorId, desc) => {
         setColors(colors.map(color => colorId === color.id ? {...color, desc: desc} : color));
-    }, [colors]);
+        setColorsLU(new Map(colorsLU.set(colorId, { ...colorsLU.get(colorId), desc: desc })))
+    }, [colors, colorsLU]);
 
     // Update plan message
     const updatePlanMessage = useCallback(async (planId, msg) => {
@@ -371,46 +377,35 @@ const SchoolsContextProvider = ({ children }) => {
 
     // Update plans data
     const addPlan = useCallback(async plan => {
-        // let vAndProposalLink = '';
-        // if (plan.proposal) {
-        //     const proposalDriveLink =
-        //         await uploadProposalToDrive(plan.proposal, plan.district, plan.city, plan.institution);
-        //     if (proposalDriveLink) {
-        //         vAndProposalLink = `V#${proposalDriveLink}#`;
-        //     } else {
-        //         console.error('Could not upload proposal');
-        //     }
-        // }
-
-        const planId = await addPlanRequest({ ...plan /*,proposal: vAndProposalLink*/ });
+        const planId = await addPlanRequest({ ...plan });
         if (planId) {
-            setPlans([{
-                ...plan,
-                id: planId
-            }].concat(plans));
+            setPlans([{ ...plan, id: planId }].concat(plans));
+            setPlansLU(new Map(plansLU.set(planId, plan)));
             return true;
         } else {
             return false;
         }
-    }, [plans]);
+    }, [plans, plansLU]);
 
     const updatePlan = useCallback(async (planId, planData) => {
         const success = await updatePlanRequest(planId, planData);
-		
         if (success) {
             setPlans(plans.map(plan => plan.id === planId ? planData : plan));
+            setPlansLU(new Map(plansLU.set(planId, planData)));
         }
-
         return success;
-    }, [plans]);
+    }, [plans, plansLU]);
     
     const deletePlan = useCallback(async planId => {
         const success = await deletePlanRequest(planId);
         if (success) {
             setPlans(plans.filter(plan => plan.id !== planId));
+            const newPlansLU = new Map(plansLU);
+            newPlansLU.delete(planId);
+            setPlansLU(newPlansLU);
         }
         return success;
-    }, [plans]);
+    }, [plans, plansLU]);
 
     // Updating general settings in backend
     const updateSettings = useCallback(async settingsData => {
@@ -508,6 +503,8 @@ const SchoolsContextProvider = ({ children }) => {
             setSettings(responseData.settings);
 
             setSchoolsLU(new Map(responseData.schools.map(school => [school.id, school])));
+            setPlansLU(new Map(responseData.plans.map(plan => [plan.id, plan])));
+            setColorsLU(new Map(responseData.colors.map(color => [color.id, color])));
         });
     }, []);
 
