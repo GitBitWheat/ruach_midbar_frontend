@@ -5,7 +5,7 @@ import { Navbar, Container, Nav } from 'react-bootstrap';
 import HomePage from '../homepage/homepage';
 import MessagesForm from '../messagesform/messagesform';
 import StatusTablesPage from '../statustablespage/statustablespage';
-import SchoolsPage from '../schoolspage/schoolpage';
+import SchoolsPage from '../schoolspage/schoolspage';
 import ContactsPage from '../contactspage/contactspage';
 import PlansPage from '../planspage/planspage'
 import PlacementsPageOld from '../placementspageold/placementspage';
