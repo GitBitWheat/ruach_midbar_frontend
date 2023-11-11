@@ -4,8 +4,6 @@ import InstructorTypesTagBoxComponent from "./instructorTypesTagBoxComponent";
 import settingsConstants from '../../utils/settingsconstants.json';
 import pageText from './instructortypescolumntext.json';
 
-
-
 const instTypesHeaderFilterDs = instructorTypes.map(instType => ({
     text: instType.text,
     value: ['instructorTypes', 'contains', instType.value]
@@ -21,8 +19,6 @@ const calculateFilterExpression = (filterValue, _selectedFilterOperation, target
 };
 
 const instTypesDisplayValue = data => (data.instructorTypes || []).join(', ');
-
-
 
 const InstructorTypesColumn = (key, addedProps) => {
     const extraProps = {...addedProps};

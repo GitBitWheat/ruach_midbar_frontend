@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useContext } from 'react';
+import { useContext } from 'react';
 
 import DataGrid,
     { Column, Paging, Editing, HeaderFilter, ColumnChooser,
@@ -6,229 +6,60 @@ import DataGrid,
     from 'devextreme-react/data-grid';
 import { SelectBox } from 'devextreme-react';
 
-import WhatsappCell from '../customcells/whatsappcell/whatsappcell';
-import { calculateWhatsappCellValue } from '../contactspage/misc/calculatewhatsappcellvalue';
+import useSelectBox from '../../customhooks/useselectbox/useselectbox';
+import useSchoolSelection from './hooks/useschoolselection';
+import useSchoolsDS from './hooks/useschoolsds';
+import usePlansDS from './hooks/useplansds';
+import useContactsDS from './hooks/usecontactsds';
+import usePaymentsDS from './hooks/usepaymentsds';
+import useInvitationsDS from './hooks/useinvitationsds';
+import useHandleCurrentPaymentsRowAction from './hooks/usehandlecurrentpaymentsrowaction';
+import useHandleCurrentInvitationsRowAction from './hooks/usehandlecurrentinvitationsrowaction';
+import useSelectedSchoolLeftPayments from './hooks/useselectedschoolleftpayments';
 
+import WhatsappCell from '../customcells/whatsappcell/whatsappcell';
 import LinkCell from '../customcells/linkcell/linkcell';
 import LinkEditCell from '../customcells/linkcell/linkeditcell';
-import InstructorsCellRender from '../planspage/misc/instructorscellrender';
 
-import Payment from '../../store/storeModels/payment';
+import InstructorsCellRender from '../planspage/misc/instructorscellrender';
+import { calculateWhatsappCellValue } from '../contactspage/misc/calculatewhatsappcellvalue';
+import { plansInstsCalculateDisplayValue } from './misc/plansinstscalculatedisplayvalue';
+
 import { SchoolsContext } from '../../store/SchoolsContextProvider';
 import { SettingsContext } from '../settingscontext/settingscontext';
-import { sum } from '../../utils/arrayUtils';
-import Invitation from '../../store/storeModels/invitation';
 
 import settingsConstants from '../../utils/settingsconstants.json';
 import pageText from './paymentspagetext.json';
 import './paymentspage.css';
-import useSelectBox, { useSelectBoxOptions } from '../../customhooks/useselectbox/useselectbox';
 
 const PaymentsPage = () => {
 
     const storeCtx = useContext(SchoolsContext);
     const storeData = storeCtx.data;
-    const storeLookupData = storeCtx.lookupData;
-    const storeMethods = storeCtx.methods;
 
     const settings = useContext(SettingsContext);
 
-    // Filters the year for the whole page
-    const [selectedSchool, setSelectedSchool] = useState(null);
+    const [selectedSchool, handleSchoolSelectionChanged] = useSchoolSelection();
 
     // Year of which the datasources are filtered
     const [dataYear, yearSelectBoxProps] = useSelectBox(storeData.plans, 'year', settings.defaultYear);
 
-    const [schoolsDS, setSchoolsDS] = useState([]);
-    useEffect(() => {
-        let filteredPlans = [];
-        if (dataYear === useSelectBoxOptions.ALL) {
-            filteredPlans = storeData.plans;
-        } else if (dataYear === useSelectBoxOptions.EMPTY) {
-            filteredPlans = storeData.plans.filter(plan => !(!!plan.year));
-        } else {
-            filteredPlans = storeData.plans.filter(plan => plan.year === dataYear);
-        }
-        filteredPlans = filteredPlans.filter(plan => plan.proposal);
-
-        const relevantSchools = new Set();
-        for (const { schoolId } of filteredPlans) {
-            const school = storeLookupData.schools.get(schoolId);
-            if (school) {
-                relevantSchools.add(school);
-            }
-        }
-        setSchoolsDS([...relevantSchools]);
-    }, [storeData.plans, storeLookupData.schools, dataYear]);
-
-    // Update the selected school
-    const handleSchoolSelectionChanged = useCallback(({ selectedRowsData }) => {
-        if (selectedRowsData &&
-            Array.isArray(selectedRowsData) &&
-            selectedRowsData[0] &&
-            typeof selectedRowsData[0] === 'object' &&
-            Object.hasOwn(selectedRowsData[0], 'id')) {
-            setSelectedSchool(storeLookupData.schools.get(selectedRowsData[0].id) || null);
-        } else {
-            setSelectedSchool(null);
-        }
-    }, [storeLookupData.schools]);
-
-    // DataSource of the contacts DataGrid - Shows contacts of selected school
-    const [contactsDS, setContactsDS] = useState([]);
-    useEffect(() => {
-        setContactsDS(
-            selectedSchool ?
-            storeData.contacts.filter(contact => contact.schoolId === selectedSchool.id) : []
-        );
-    }, [storeData.contacts, selectedSchool]);
-
-
-
-    // DataSource of the plans DataGrid - show plan of selected school
-    // of the selected year
-    const [plansDS, setPlansDS] = useState([]);
-    useEffect(() => {
-        if (!(!!selectedSchool)) {
-            setPlansDS([]);
-        } else if (dataYear === useSelectBoxOptions.ALL) {
-            setPlansDS(
-                storeData.plans.filter(plan => plan.schoolId === selectedSchool.id)
-            );
-        } else if (dataYear === useSelectBoxOptions.EMPTY) {
-            setPlansDS(
-                storeData.plans.filter(plan => plan.schoolId === selectedSchool.id && !(!!plan.year))
-            );
-        } else {
-            setPlansDS(
-                storeData.plans.filter(plan => plan.schoolId === selectedSchool.id && plan.year === dataYear)
-            );
-        }
-    }, [storeData.plans, selectedSchool, dataYear]);
-
-    const plansInstructorsDisplayValue = useCallback(
-        data => [data.instructor1, data.instructor2, data.instructor3, data.instructor4]
-            .filter(inst => inst).map(inst => inst.split('#')[0]).join(', '),
-        []
-    );
+    const schoolsDS = useSchoolsDS(dataYear);
+    const contactsDS = useContactsDS(selectedSchool);
+    const plansDS = usePlansDS(selectedSchool, dataYear);
+    const paymentsDS = usePaymentsDS(selectedSchool);
+    const invitationsDS = useInvitationsDS(selectedSchool);
 
     // DataSource of the pricing DataGrid - the pricing fields of each plan
     // of the selected school and the selected year
     const pricingDS = plansDS;
 
-    // DataSource of the payments DataGrids - filtered by selected school and year
-    const [paymentsDS, setPaymentsDS] = useState([]);
-    useEffect(() => {
-        setPaymentsDS(
-            selectedSchool ?
-            storeData.payments.filter(payment => payment.sym === selectedSchool.sym) : []
-        );
-    }, [storeData.payments, selectedSchool]);
+    const [handlePaymentsRowInserting, handlePaymentsRowRemoving, handlePaymentsRowUpdating] =
+        useHandleCurrentPaymentsRowAction(selectedSchool);
+    const [handleInvitationsRowInserting, handleInvitationsRowRemoving, handleInvitationsRowUpdating] =
+        useHandleCurrentInvitationsRowAction(selectedSchool); 
 
-    // Request the server to update the data source, proceed if request succeeded
-    const handlePaymentsRowInserting = useCallback(event => {
-        if (selectedSchool === null) {
-            event.cancel = true;
-            return;
-        }
-        // Replace sym with schoolId
-        const paymentData = new Payment({
-            ...event.data,
-            sym: selectedSchool.sym,
-            schoolName: selectedSchool.name,
-            city: selectedSchool.city
-        });
-        const isCanceled = new Promise(resolve => {
-            storeMethods.addPayment(paymentData)
-                .then((validationResult) => {
-                    resolve(!validationResult);
-                });
-        });
-        event.cancel = isCanceled;
-    }, [storeMethods, selectedSchool]);
-
-    const handlePaymentsRowRemoving = useCallback(event => {
-        const isCanceled = new Promise(resolve => {
-            storeMethods.deletePayment(event.key)
-                .then((validationResult) => {
-                    resolve(!validationResult);
-                });
-        });
-        event.cancel = isCanceled;
-    }, [storeMethods]);
-
-    const handlePaymentsRowUpdating = useCallback(event => {
-        const paymentData = new Payment({...event.oldData, ...event.newData});
-        const isCanceled = new Promise(resolve => {
-            storeMethods.updatePayment(event.key, paymentData)
-                .then((validationResult) => {
-                    resolve(!validationResult);
-                });
-        });
-        event.cancel = isCanceled;
-    }, [storeMethods]);
-
-    // DataSource of the invitations DataGrid - filtered by selected school
-    const [invitationsDS, setInvitationsDS] = useState([]);
-    useEffect(() => {
-        setInvitationsDS(
-            selectedSchool ?
-            storeData.invitations.filter(invitation => invitation.sym === selectedSchool.sym) : []
-        );
-    }, [storeData.invitations, selectedSchool]);
-
-    // Request the server to update the data source, proceed if request succeeded
-    const handleInvitationsRowInserting = useCallback(event => {
-        if (selectedSchool === null) {
-            event.cancel = true;
-            return;
-        }
-        // Replace sym with schoolId
-        const invitationData = new Invitation({
-            ...event.data,
-            sym: selectedSchool.sym,
-            schoolName: selectedSchool.name,
-            city: selectedSchool.city
-        });
-        const isCanceled = new Promise(resolve => {
-            storeMethods.addInvitation(invitationData)
-                .then((validationResult) => {
-                    resolve(!validationResult);
-                });
-        });
-        event.cancel = isCanceled;
-    }, [storeMethods, selectedSchool]);
-
-    const handleInvitationsRowRemoving = useCallback(event => {
-        const isCanceled = new Promise(resolve => {
-            storeMethods.deleteInvitation(event.key)
-                .then((validationResult) => {
-                    resolve(!validationResult);
-                });
-        });
-        event.cancel = isCanceled;
-    }, [storeMethods]);
-
-    const handleInvitationsRowUpdating = useCallback(event => {
-        const invitationData = new Invitation({...event.oldData, ...event.newData});
-        const isCanceled = new Promise(resolve => {
-            storeMethods.updateInvitation(event.key, invitationData)
-                .then((validationResult) => {
-                    resolve(!validationResult);
-                });
-        });
-        event.cancel = isCanceled;
-    }, [storeMethods]);
-
-    // Left payments of the selected school
-    const [left, setLeft] = useState(0);
-    useEffect(() => {
-        const planOverallSum = sum(plansDS.map(plan => Math.trunc(plan.overall)));
-        const paymentsPayedSum = sum(paymentsDS.map(payment => Math.trunc(payment.payed)));
-        setLeft(planOverallSum - paymentsPayedSum);
-    }, [plansDS, paymentsDS]);
-
-
+    const left = useSelectedSchoolLeftPayments(plansDS, paymentsDS);
 
     return (
         <table className='paymentsPageMainTable'>
@@ -385,7 +216,7 @@ const PaymentsPage = () => {
                             caption={pageText.instructors}
                             dataType='string'
                             cellRender={InstructorsCellRender}
-                            calculateDisplayValue={plansInstructorsDisplayValue}
+                            calculateDisplayValue={plansInstsCalculateDisplayValue}
                         />
                         <Column
                             dataField='invitation'
@@ -591,7 +422,5 @@ const PaymentsPage = () => {
         </table>
     );
 };
-
-
 
 export default PaymentsPage;
