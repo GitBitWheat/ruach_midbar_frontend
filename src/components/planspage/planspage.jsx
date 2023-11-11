@@ -15,7 +15,7 @@ import useColsLookupDS from './hooks/usecolslookupds.jsx';
 import useSearchPlan from './hooks/usesearchplan.jsx';
 
 import { numberWithCommas } from './misc/numberwithcommas.js';
-import { handleDoneRowActions } from '../schoolspage/misc/handledonerowactions.js';
+import { handleDoneRowAction } from './misc/handledonerowaction.js';
 import { dataGridRightOnContentReady } from '../../utils/datagridrightoncontentready.js';
 import { initNewRowWithYear } from './misc/initnewrowwithyear.js';
 
@@ -75,7 +75,7 @@ const PlansPage = () => {
     const linkDSLst = [contactLinkDS, planLinkDS];
 
     const [handleRowInserting, handleRowRemoving, handleRowUpdating] = useHandleCurrentRowActions(linkDSLst);
-    const [handleRowInserted, handleRowRemoved, handleRowUpdated] = handleDoneRowActions();
+    const [handleRowInserted, handleRowRemoved, handleRowUpdated] = handleDoneRowAction();
 
     // Lookup datasources for some columns
     const [statusesLookupDS, invitationsLookupDS, districtsLookupDS, plansLookupDS, schoolsLookupDS] =
