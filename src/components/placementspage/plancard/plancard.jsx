@@ -19,7 +19,7 @@ const PlanCard = ({ planId }) => {
                             .filter(inst => inst)
             } || {}) : {});
         } else {
-            setPlan({});
+            setPlan(null);
         }
     }, [storeData.plans, planId]);
 
@@ -30,77 +30,74 @@ const PlanCard = ({ planId }) => {
                     <h4>{pageText.planCard}</h4>
                 </Col>
             </Row>
+            <Row>
+                <Col>
+                    <b>{pageText.institution}</b>
+                </Col>
+                <Col>
+                    <b>{pageText.city}</b>
+                </Col>
+                <Col>
+                    <b>{pageText.plan}</b>
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    {plan?.institution || <>&nbsp;</>}
+                </Col>
+                <Col>
+                    {plan?.city || <>&nbsp;</>}
+                </Col>
+                <Col>
+                    {plan?.plan ? linkToA(plan.plan) : <>&nbsp;</>}
+                </Col>
+            </Row>
 
-            {plan ? (<>
-                <Row>
-                    <Col>
-                        <b>{pageText.institution}</b>
-                    </Col>
-                    <Col>
-                        <b>{pageText.city}</b>
-                    </Col>
-                    <Col>
-                        <b>{pageText.plan}</b>
-                    </Col>
-                    <Col>
-                        <b>{pageText.grade}</b>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        {plan.institution || ''}
-                    </Col>
-                    <Col>
-                        {plan.city || ''}
-                    </Col>
-                    <Col>
-                        {plan.plan ? linkToA(plan.plan) : ''}
-                    </Col>
-                    <Col>
-                        {plan.grade || ''}
-                    </Col>
-                </Row>
+            <Row>
+                <Col xs={4}>
+                    <b>{pageText.grade}</b>
+                </Col>
+                <Col xs={4}>
+                    <b>{pageText.contact}</b>
+                </Col>
+                <Col xs={2}>
+                    <b>{pageText.weeks}</b>
+                </Col>
+                <Col xs={2}>
+                    <b>{pageText.days}</b>
+                </Col>
+            </Row>
+            <Row>
+                <Col xs={4}>
+                    {plan?.grade || <>&nbsp;</>}
+                </Col>
+                <Col xs={4}>
+                    {plan?.contact ? linkToA(plan.contact, false) : <>&nbsp;</>}
+                </Col>
+                <Col xs={2}>
+                    {plan?.weeks || <>&nbsp;</>}
+                </Col>
+                <Col xs={2}>
+                    {plan?.days || <>&nbsp;</>}
+                </Col>
+            </Row>
 
-                <Row>
-                    <Col>
-                        <b>{pageText.weeks}</b>
-                    </Col>
-                    <Col>
-                        <b>{pageText.days}</b>
-                    </Col>
-                    <Col>
-                        <b>{pageText.contact}</b>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        {plan.weeks || ''}
-                    </Col>
-                    <Col>
-                        {plan.days || ''}
-                    </Col>
-                    <Col>
-                        {plan.contact ? linkToA(plan.contact, false) : ''}
-                    </Col>
-                </Row>
-
-                <Row>
-                    <Col>
-                        <b>{`${pageText.instructors}: `}</b>
-                        {((plan.instructors || []).map((instructor, idx) => (
-                                <Fragment key={idx}>
-                                    {linkToA(instructor, false)}
-                                    {idx < plan.instructors.length - 1 ? ', ' : null}
-                                </Fragment>
-                            ))) || ''}
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <b>{`${pageText.details}: `}</b>{plan.details || ''}
-                    </Col>
-                </Row>
-            </>) : pageText.noPlanChosen}
+            <Row>
+                <Col>
+                    <b>{`${pageText.instructors}: `}</b>
+                    {((plan?.instructors || []).map((instructor, idx) => (
+                            <Fragment key={idx}>
+                                {linkToA(instructor, false)}
+                                {idx < (plan?.instructors.length || 0) - 1 ? ', ' : null}
+                            </Fragment>
+                        ))) || null}
+                </Col>
+            </Row>
+            <Row>
+                <Col>
+                    <b>{`${pageText.details}: `}</b>{plan?.details || null}
+                </Col>
+            </Row>
         </Container>
     );
 };

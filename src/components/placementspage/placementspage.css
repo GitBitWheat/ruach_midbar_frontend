@@ -20,13 +20,11 @@
 }
 
 #filterButtonsContainer {
-    width: 50vw;
-    min-width: 50vw;
+    width: 45%;
 }
 
 #planCardContainer {
-    width: 25vw;
-    min-width: 25vw;
+    width: 30%;
 }
 
 .smallGapRow > * {
@@ -40,8 +38,10 @@
 
 .yellowBtn {
     background-color: #ffc107;
+    font-weight: bolder;
 }
 
 .lightBlueBtn {
     background-color: #0dcaf0;
+    font-weight: bolder;
 }
