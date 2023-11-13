@@ -6,7 +6,7 @@ const id = x => x;
 /**
  * @param {Array} dataSource 
  * @param {string} placeholder 
- * @param {React.Ref<import('devextreme-react').DataGrid>} dgRef 
+ * @param {React.RefObject<import('devextreme-react').DataGrid>} dgRef 
  * @returns Data source filtered by the search text, and options for the search textbox
  */
 const useSearch = (dataSource, placeholder, dgRef, process=id) => {
