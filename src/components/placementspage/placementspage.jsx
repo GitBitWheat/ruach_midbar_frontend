@@ -19,6 +19,7 @@ import useDists, { updateDGFltrs, updateBtnFltrs } from "./hooks/usedists";
 import usePlanMsg from "./hooks/useplanmsg";
 import usePlaceCandidates from "./hooks/useplacecandidates";
 import useInstToOptionOrCandidate from "./hooks/useinsttooptionorcandidate";
+import useHandleInstNotesUpdating from "./hooks/usehandleinstnotesupdating";
 
 import { noFilterValuesStateHandle } from "./misc/nofiltervaluesstatehandle";
 import { distColSortingMethod } from "./misc/distcolsortingmethod";
@@ -119,6 +120,9 @@ const PlacementsPage = () => {
     const cvOptionsHeaderFilterDS = useLinkDataSource(optionsDS, 'cv');
     const cvCandidatesHeaderFilterDS = useLinkDataSource(candidatesDS, 'cv');
 
+    // Instructor notes can be updated in the remote database
+    const handleInstNotesUpdating = useHandleInstNotesUpdating();
+
     const distCol = () => (
         <Column
             key="dist"
@@ -199,7 +203,7 @@ const PlacementsPage = () => {
             dataField="notes"
             dataType="string"
             caption={pageText.notes}
-            allowEditing={false}
+            allowEditing={true}
         />,
         InstructorTypesColumn('instructorTypes', { allowEditing: false }),
     ];
@@ -295,6 +299,7 @@ const PlacementsPage = () => {
                         onRowPrepared={optionsRowPreparedHandler}
                         onOptionChanged={optionsOptionChangedHandler}
                         onContentReady={ContentReadyHandler}
+                        onRowUpdating={handleInstNotesUpdating}
                     >
                         <HeaderFilter
                             visible={true}
@@ -307,6 +312,12 @@ const PlacementsPage = () => {
                             type='custom'
                             customSave={saveOptionsDataGridState}
                             customLoad={loadOptionsDataGridState}
+                        />
+                        <Editing
+                            mode='cell'
+                            allowAdding={false}
+                            allowDeleting={false}
+                            allowUpdating={true}
                         />
                         <Paging
                             enabled={true}
@@ -334,6 +345,7 @@ const PlacementsPage = () => {
                         hoverStateEnabled={true}
                         onRowPrepared={candidatesRowPreparedHandler}
                         onContentReady={ContentReadyHandler}
+                        onRowUpdating={handleInstNotesUpdating}
                     >
                         <HeaderFilter
                             visible={true}
@@ -348,7 +360,7 @@ const PlacementsPage = () => {
                             customLoad={loadCandidatesDataGridState}
                         />
                         <Editing
-                            mode="cell"
+                            mode='cell'
                             allowAdding={false}
                             allowDeleting={false}
                             allowUpdating={true}

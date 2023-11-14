@@ -7,8 +7,6 @@ import { getDataRequest, addMsgPatternRequest, deleteMsgPatternRequest, addInstr
     addPlanRequest, updatePlanRequest, deletePlanRequest, updateSettingsRequest }
     from '../utils/localServerRequests';
 
-
-
 const SchoolsContext = createContext();
 
 const SchoolsContextProvider = ({ children }) => {
@@ -73,8 +71,6 @@ const SchoolsContextProvider = ({ children }) => {
         plans: plansLU,
         colors: colorsLU
     };
-
-
 
     // Adding and deleting a message pattern
     const addMessagePattern = useCallback((msg1, msg2, msg3, title) => {
@@ -473,8 +469,6 @@ const SchoolsContextProvider = ({ children }) => {
         methods: methods
     };
 
-
-
     useEffect(() => {
         getDataRequest(responseData => {
             setSchools(responseData.schools);
@@ -507,8 +501,6 @@ const SchoolsContextProvider = ({ children }) => {
             setColorsLU(new Map(responseData.colors.map(color => [color.id, color])));
         });
     }, []);
-
-
 
     return (
         <SchoolsContext.Provider value={value}>

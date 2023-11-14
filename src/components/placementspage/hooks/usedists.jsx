@@ -69,9 +69,10 @@ const useDists = (selectedPlan, optionsDGRef, candidatesDGRef) => {
     const [dists, setDists] = useState({});
     useEffect(() => {
         (async () => {
-            setDists(selectedPlan && selectedPlan.city ?
-                await getDistanceRequest(selectedPlan.city)
-            : {});
+            setDists(
+                selectedPlan && selectedPlan.city ?
+                await getDistanceRequest(selectedPlan.city) : {}
+            );
         })();
     }, [selectedPlan]);
 
@@ -102,8 +103,8 @@ const useDists = (selectedPlan, optionsDGRef, candidatesDGRef) => {
      * @param {import('devextreme/ui/data_grid').OptionChangedEvent} event 
      */
     const resortByDistOptionChangedHandler = event => {
-        // Preventing an infinite loop
-        // Preventing unnecessary columnOption calls on unrelated option changes
+        // Preventing an infinite loop by 'columns[1].sortOrder' option changes
+        // Preventing unnecessary resorts calls on unrelated option changes
         if (event.fullName === 'columns[1].sortOrder' ||
             ['hoveredElement', 'onRowPrepared'].includes(event.fullName)) {
             return;

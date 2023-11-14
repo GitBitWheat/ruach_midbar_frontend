@@ -3,7 +3,7 @@ const holdLen = 500;
 /**
  * RowPrepared event handler. Constructs a long click event for the row, and assigns
  * longClickHandler to be its handler. longClickHandler gets the RowPreparedEvent object.
- * @param {Function} longClickHandler
+ * @param {function(import('devextreme/ui/data_grid').RowPreparedEvent): void} longClickHandler
 */
 export const dataGridRowLongClick = longClickHandler =>
     /** @param {import('devextreme/ui/data_grid').RowPreparedEvent} event */

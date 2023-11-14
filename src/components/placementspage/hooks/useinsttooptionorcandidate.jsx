@@ -17,14 +17,14 @@ const useInstToOptionOrCandidate = (selectedPlan, optionSwitchColorToDefault, de
         // After turning an instructor to a candidate, delete their color
         deleteColor(data.id);
     };
+
     const optionsRowPreparedHandler = dataGridRowLongClick(
-        /** @param {import('devextreme/ui/data_grid').RowPreparedEvent} event */
         event => {
             turnToCandidate(event.data);
 
             // After updating the options/candidates data, resort the grids by dists
             // Only works with a timeout for some reason
-            setTimeout(resortGrids, 500);
+            setTimeout(resortGrids, 1000);
         }
     );
 
@@ -34,8 +34,8 @@ const useInstToOptionOrCandidate = (selectedPlan, optionSwitchColorToDefault, de
         // After turning an instructor to optional, give them the default option color
         optionSwitchColorToDefault(data.id);
     };
+
     const candidatesRowPreparedHandler = dataGridRowLongClick(
-        /** @param {import('devextreme/ui/data_grid').RowPreparedEvent} event */
         event => {
             turnToOptional(event.data);
 
