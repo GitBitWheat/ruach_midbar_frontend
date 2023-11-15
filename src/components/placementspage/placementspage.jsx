@@ -1,7 +1,8 @@
 import { useEffect, useRef } from "react";
 import { DataGrid, HeaderFilter, Column, ColumnFixing, StateStoring, Editing, Paging }
     from 'devextreme-react/data-grid';
-import { Button, TextArea } from "devextreme-react";
+import { TextArea } from "devextreme-react";
+import { Button } from "react-bootstrap";
 
 import WhatsappCell from "../customcells/whatsappcell/whatsappcell";
 import LinkCell from "../customcells/linkcell/linkcell";
@@ -237,54 +238,58 @@ const PlacementsPage = () => {
                 />
                 <div className="flex-row">
                     <Button
-                        text={pageText.sendMessagesToInstructors}
-                        icon="bi bi-send"
+                        variant="warning"
                         onClick={sendMsgBtnClickHandler}
                         disabled={!(!!selectedPlan)}
-                        className="yellowBtn"
-                    />
+                    >
+                        {pageText.sendMessagesToInstructors}
+                    </Button>
                     <Button
-                        text={pageText.saveMsg}
-                        icon="bi bi-floppy"
+                        variant="warning"
                         onClick={updatePlanMsg}
                         disabled={!(!!selectedPlan)}
-                        className="yellowBtn"
-                    />
+                    >
+                        {pageText.saveMsg}
+                    </Button>
                     <Button
-                        text={pageText.placeCandidates}
-                        icon="bi bi-plus-lg"
+                        variant="warning"
                         onClick={placeCandidates}
                         disabled={!(!!selectedPlan)}
-                        className="yellowBtn"
-                    />
+                    >
+                        {pageText.placeCandidates}
+                    </Button>
                     <span className={selectedPlan ? "" : "dx-state-disabled dx-widget"}>
                         {pageText.unplacePlanInstructor}
                     </span>
                     <span className="smallGapRow">
                         <Button
-                            text="1"
+                            variant="info"
                             onClick={cancelPlacement1}
                             disabled={!(!!selectedPlan)}
-                            className="lightBlueBtn"
-                        />
+                        >
+                            1
+                        </Button>
                         <Button
-                            text="2"
+                            variant="info"
                             onClick={cancelPlacement2}
                             disabled={!(!!selectedPlan)}
-                            className="lightBlueBtn"
-                        />
+                        >
+                            2
+                        </Button>
                         <Button
-                            text="3"
+                            variant="info"
                             onClick={cancelPlacement3}
                             disabled={!(!!selectedPlan)}
-                            className="lightBlueBtn"
-                        />
+                        >
+                            3
+                        </Button>
                         <Button
-                            text="4"
+                            variant="info"
                             onClick={cancelPlacement4}
                             disabled={!(!!selectedPlan)}
-                            className="lightBlueBtn"
-                        />
+                        >
+                            4
+                        </Button>
                     </span>
                 </div>
             </div>
