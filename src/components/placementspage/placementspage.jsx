@@ -219,7 +219,7 @@ const PlacementsPage = () => {
                 <div id="planCardContainer">
                     <PlanCard planId={(selectedPlan && selectedPlan.id) || null} />
                 </div>
-                <div>
+                <div id="textAreaContainer">
                     <TextArea
                         height={200}
                         width={300}
