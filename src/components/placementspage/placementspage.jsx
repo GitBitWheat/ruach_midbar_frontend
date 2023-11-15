@@ -222,14 +222,13 @@ const PlacementsPage = () => {
                 <div id="textAreaContainer">
                     <TextArea
                         height={200}
-                        width={300}
                         value={msg}
                         onInput={handleMsgInput}
                         disabled={!(!!selectedPlan)}
                     />
                 </div>
             </div>
-            <div className="flex-row">
+            <div className="placementsPageRow">
                 <PlanMenu
                     selectedPlanId={selectedPlan ? selectedPlan.id : null}
                     selectedPlanYear={selectedPlan ? selectedPlan.year : null}

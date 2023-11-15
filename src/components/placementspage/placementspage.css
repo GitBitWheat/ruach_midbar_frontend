@@ -4,6 +4,8 @@
     justify-content: flex-start;
     gap: 10px;
     padding-top: 2px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 .placementsPageContainer button {
@@ -15,8 +17,6 @@
     flex-direction: row;
     justify-content: flex-start;
     gap: 10px;
-    padding-left: 10px;
-    padding-right: 10px;
     width: 100%;
 }
 
@@ -27,7 +27,7 @@
     width: 30%;
 }
 #textAreaContainer {
-    width: 22.5%
+    width: 22.5%;
 }
 
 .smallGapRow > * {
@@ -35,7 +35,7 @@
 }
 
 .placementsTableContainer {
-    width: 49.5%;
+    -basis: calc(50% - 5px);
 }
 
 .pagerAboveDataGrid {
