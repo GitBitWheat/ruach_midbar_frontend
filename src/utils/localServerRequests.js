@@ -875,7 +875,7 @@ export async function updateInstructorsCreds() {
         timeout: 60 * 1000 // 60 seconds
     };
     try {
-        await api.post('http://localhost:8000/updatepeoplecreds/', {}, config);
+        await api.post('http://localhost:8000/updateinstructorscreds/', {}, config);
         return true;
     } catch (error) {
         console.error(error);
@@ -890,7 +890,7 @@ export async function updateProposalCreds() {
         timeout: 60 * 1000 // 60 seconds
     };
     try {
-        await api.post('http://localhost:8000/updatepeoplecreds/', {}, config);
+        await api.post('http://localhost:8000/updateproposalcreds/', {}, config);
         return true;
     } catch (error) {
         console.error(error);
