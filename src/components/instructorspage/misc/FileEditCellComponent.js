@@ -1,6 +1,10 @@
 import { uploadInstructorFileToDrive } from "../../../utils/localServerRequests";
 import pageText from '../instructorspagetext.json';
 
+/**
+ * @param {Object} props
+ * @param {import('devextreme/ui/data_grid').ColumnEditCellTemplateData} props.data
+ */
 const FileEditCellComponent = ({ data }) => {
     const instructor = data.data;
     const instructorDirName =
@@ -21,6 +25,7 @@ const FileEditCellComponent = ({ data }) => {
             );
             if (file_metadata) {
                 data.setValue(`${data.column.caption}#${file_metadata.drive_link}#`);
+                data.component.repaint();
             } else {
                 alert(pageText.proposalUploadFailed);
             }
