@@ -1,9 +1,8 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { TextBox } from "devextreme-react";
+import useTab from "../linkcell/usetab";
 import pageText from './whatsappcelltext.json';
 import './whatsappcell.css';
-
-
 
 const whatsappLink = 'whatsapp://send/?phone=';
 
@@ -27,21 +26,27 @@ const WhatsappEditCell = ({ data }) => {
         data.setValue(`${name}#${whatsappLink}${event.value}#`);
     }, [data, name]);
 
-
+    const textRef = useRef(null);
+    const phoneRef = useRef(null);
+    const [onTextTabKey, onPhoneTabKey] = useTab(textRef, phoneRef);
 
     return (
         <div className="whatsappEditCellRow">
             <TextBox
+                ref={textRef}
                 defaultValue={name}
                 placeholder={pageText.name}
                 onValueChanged={onNameChanged}
                 rtlEnabled={true}
+                onKeyDown={onTextTabKey}
             />
             <TextBox
+                ref={phoneRef}
                 defaultValue={phone}
                 placeholder={pageText.phone}
                 onValueChanged={onPhoneChanged}
                 rtlEnabled={false}
+                onKeyDown={onPhoneTabKey}
             />
         </div>
     );
