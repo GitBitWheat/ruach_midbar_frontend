@@ -42,3 +42,7 @@
     border-top: 0px;
     padding-top: 0px;
 }
+
+.placementsPageContainer button.btn:disabled {
+    opacity: 100%;
+}
