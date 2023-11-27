@@ -22,6 +22,7 @@ import { initNewRowWithYear } from './misc/initnewrowwithyear.js';
 import SchoolNameCellComponent from './misc/schoolnamecellcomponent.jsx';
 import ProposalEditCellComponent from './misc/proposaleditcellcomponent.jsx';
 import LinkCell from '../customcells/linkcell/linkcell';
+import LinkEditCell from '../customcells/linkcell/linkeditcell.jsx';
 import WhatsappCell from '../customcells/whatsappcell/whatsappcell';
 import NumberEditCell from '../customcells/numbereditcell/numbereditcell';
 import NumberLookupEditCell from '../customcells/numberlookupeditcell/numberlookupeditcell';
@@ -78,7 +79,7 @@ const PlansPage = () => {
     const [handleRowInserted, handleRowRemoved, handleRowUpdated] = handleDoneRowAction();
 
     // Lookup datasources for some columns
-    const [statusesLookupDS, invitationsLookupDS, districtsLookupDS, plansLookupDS, schoolsLookupDS] =
+    const [statusesLookupDS, invitationsLookupDS, districtsLookupDS, schoolsLookupDS] =
         useColsLookupDS(yearFilteredPlansDS);
 
     const [schoolLevelHeaderFilterDS, schoolLevelCalculateFilterExpr] =
@@ -306,18 +307,9 @@ const PlansPage = () => {
                     dataType='string'
                     caption={pageText.plan}
                     cellRender={LinkCell}
-                    editCellComponent={ComboEditCell}
+                    editCellComponent={LinkEditCell}
                 >
                     <HeaderFilter dataSource={planLinkDS.dataSource} />
-                    <Lookup
-                        dataSource={{
-                            store: plansLookupDS,
-                            paginate: true,
-                            pageSize: settingsConstants.columnLookupPageSize
-                        }}
-                        valueExpr='value'
-                        displayExpr='display'
-                    />
                 </Column>
                 <Column
                     dataField='days'

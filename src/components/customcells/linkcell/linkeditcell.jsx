@@ -3,8 +3,6 @@ import { TextBox } from "devextreme-react";
 import pageText from './linkcelltext.json';
 import './linkcell.css';
 
-
-
 /**
  * Lookup based custom edit cell
  * @param {Object} props Component props
@@ -46,7 +44,5 @@ const LinkEditCell = ({ data }) => {
         </div>
     );
 };
-
-
 
 export default LinkEditCell;

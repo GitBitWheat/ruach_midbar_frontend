@@ -22,14 +22,6 @@ const useColsLookupDS = yearFilteredPlansDS => {
         setDistrictsLookupDS(uniques(yearFilteredPlansDS.map(plan => plan.district).filter(val => val)));
     }, [yearFilteredPlansDS]);
 
-    const [plansLookupDS, setPlansLookupDS] = useState([]);
-    useEffect(() => {
-        setPlansLookupDS(
-            uniques(yearFilteredPlansDS.map(plan => plan.plan).filter(val => val))
-            .map(plan => ({ value: plan, display: plan.split('#')[0] }))
-        );
-    }, [yearFilteredPlansDS]);
-
     const [schoolsLookupDS, setSchoolsLookupDS] = useState([]);
     useEffect(() => {
         setSchoolsLookupDS(storeData.schools.map(school => ({
@@ -38,7 +30,7 @@ const useColsLookupDS = yearFilteredPlansDS => {
         })))
     }, [storeData.schools]);
 
-    return [statusesLookupDS, invitationsLookupDS, districtsLookupDS, plansLookupDS, schoolsLookupDS];
+    return [statusesLookupDS, invitationsLookupDS, districtsLookupDS, schoolsLookupDS];
 };
 
 export default useColsLookupDS;
