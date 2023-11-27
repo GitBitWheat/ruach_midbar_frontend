@@ -37,7 +37,7 @@ const SchoolsPage = () => {
     // Filter data sources for link columns
     const repLinkDs = useLinkDataSource(storeData.schools, 'representative');
 
-    const [handleRowInserting, handleRowRemoving, handleRowUpdating] = useHandleCurrentRowAction(repLinkDs);
+    const [handleRowInserting, handleRowRemoving, handleRowUpdating] = useHandleCurrentRowAction([repLinkDs]);
 
     // Update link data sources after updating plans data source, and log the update
     const [handleRowInserted, handleRowRemoved, handleRowUpdated] = handleDoneRowAction();
