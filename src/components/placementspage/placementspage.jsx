@@ -257,9 +257,7 @@ const PlacementsPage = () => {
                     >
                         {pageText.placeCandidates}
                     </Button>
-                    <span className={selectedPlan ? "" : "dx-state-disabled dx-widget"}>
-                        {pageText.unplacePlanInstructor}
-                    </span>
+                    <span>{pageText.unplacePlanInstructor}</span>
                     <span className="smallGapRow">
                         <Button
                             variant="info"
