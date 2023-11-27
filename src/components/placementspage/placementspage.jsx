@@ -290,6 +290,7 @@ const PlacementsPage = () => {
                             4
                         </Button>
                     </span>
+                    <a target="_blank" rel="noreferrer" href='https://www.google.com/maps'>{pageText.googleMaps}</a>
                 </div>
             </div>
 
