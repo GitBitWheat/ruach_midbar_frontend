@@ -24,6 +24,7 @@
     "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-google-drive-picker": "^1.2.2",
+    "react-loader-spinner": "^5.4.5",
     "react-scripts": "5.0.1",
     "react-uuid": "^2.0.0",
     "rrule": "^2.7.2",

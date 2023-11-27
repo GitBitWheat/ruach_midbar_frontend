@@ -9,7 +9,7 @@ const whatsappLink = 'whatsapp://send/?phone=';
 /**
  * Lookup based custom edit cell
  * @param {Object} props Component props
- * @param {import("devextreme/ui/data_grid").ColumnCellTemplateData} props.data Data prop
+ * @param {import("devextreme/ui/data_grid").ColumnEditCellTemplateData} props.data Data prop
  */
 const WhatsappEditCell = ({ data }) => {
 
