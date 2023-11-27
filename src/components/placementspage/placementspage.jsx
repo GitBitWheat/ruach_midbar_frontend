@@ -294,6 +294,7 @@ const PlacementsPage = () => {
 
             <div className="placementsPageRow">
                 <div className="placementsTableContainer">
+                    <h4>{pageText.optionsHeader}</h4>
                     <DataGrid
                         ref={optionsDGRef}
                         dataSource={optionsDS}
@@ -341,6 +342,7 @@ const PlacementsPage = () => {
                     </DataGrid>
                 </div>
                 <div className="placementsTableContainer">
+                    <h4>{pageText.candidatesHeader}</h4>
                     <DataGrid
                         ref={candidatesDGRef}
                         dataSource={candidatesDS}
