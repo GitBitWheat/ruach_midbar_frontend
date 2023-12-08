@@ -1,26 +1,20 @@
 import { useState, useEffect } from 'react';
 import { Navbar, Container, Nav } from 'react-bootstrap';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import pageText from './pagesnavbartext.json';
 import './pagesnavbar.css';
 
 const PagesNavbar = () => {
 
     const [page, setPage] = useState(null);
+    const location = useLocation();
 
-    const nav = useNavigate();
     useEffect(() => {
-        const last_page = localStorage.getItem('last_page') || '/schools';
+        const last_page = location.pathname || '/schools';
         setPage(last_page);
-        nav(last_page);
-    }, [nav]);
+    }, [location]);
 
     const handlePageChange = newPage => () => {
-        try {
-            localStorage.setItem('last_page', newPage);
-        } catch(err) {
-            console.error('Cannot save the last page you opened\n', err);
-        }
         setPage(newPage);
     };
 
