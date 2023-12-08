@@ -1,6 +1,6 @@
 import React, { useContext, useRef } from 'react';
 
-import { SchoolsContext } from '../../store/SchoolsContextProvider'
+import { StoreContext } from '../../store/StoreContextProvider'
 import { SettingsContext } from '../settingscontext/settingscontext';
 
 import useLinkDataSource from '../../customhooks/uselinkdatasource';
@@ -24,7 +24,7 @@ import pageText from './schoolspagetext.json';
 
 const SchoolsPage = () => {
 
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
 
     const settings = useContext(SettingsContext);

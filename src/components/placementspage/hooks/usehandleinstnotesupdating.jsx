@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { SchoolsContext } from '../../../store/SchoolsContextProvider';
+import { StoreContext } from '../../../store/StoreContextProvider';
 import Instructor from "../../../store/storeModels/instructor";
 
 /**
@@ -7,7 +7,7 @@ import Instructor from "../../../store/storeModels/instructor";
  * in placements page.
  */
 const useHandleInstNotesUpdating = () => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeMethods = storeCtx.methods;
 
     /**

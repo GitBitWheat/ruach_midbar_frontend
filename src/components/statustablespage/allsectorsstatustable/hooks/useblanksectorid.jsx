@@ -1,8 +1,8 @@
 import { useContext, useMemo } from "react";
-import { SchoolsContext } from '../../../../store/SchoolsContextProvider';
+import { StoreContext } from '../../../../store/StoreContextProvider';
 
 const useBlankSectorId = () => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
 
     //Should be some constant id

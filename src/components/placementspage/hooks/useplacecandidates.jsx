@@ -1,9 +1,9 @@
 import { useContext } from 'react';
 import pageText from '../placementspagetext.json';
-import { SchoolsContext } from "../../../store/SchoolsContextProvider";
+import { StoreContext } from "../../../store/StoreContextProvider";
 
 const usePlaceCandidates = (selectedPlan, candidatesDS) => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeMethods = storeCtx.methods;
 
     const placeCandidates = _event => {

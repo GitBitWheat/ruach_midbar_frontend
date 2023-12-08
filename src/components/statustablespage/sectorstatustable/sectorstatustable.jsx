@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { SchoolsContext } from '../../../store/SchoolsContextProvider';
+import { StoreContext } from '../../../store/StoreContextProvider';
 import { DataGrid } from "devextreme-react";
 import { Column, Paging, HeaderFilter, ColumnChooser, ColumnFixing, StateStoring }
     from "devextreme-react/data-grid";
@@ -12,7 +12,7 @@ import settingsConstants from '../../../utils/settingsconstants.json';
 import pageText from '../statustablespagetext.json';
 
 const SectorStatusTable = ({ sector }) => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
 
     const dataSource = useDS(sector);

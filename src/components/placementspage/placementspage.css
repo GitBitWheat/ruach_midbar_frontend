@@ -37,6 +37,9 @@
 .placementsTableContainer {
     width: calc(50% - 5px);
 }
+.placementsTableContainer > .dx-widget {
+    max-width: none !important;
+}
 
 .pagerAboveDataGrid {
     border-top: 0px;

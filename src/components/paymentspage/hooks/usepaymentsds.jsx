@@ -1,8 +1,8 @@
 import { useState, useEffect, useContext } from "react";
-import { SchoolsContext } from "../../../store/SchoolsContextProvider";
+import { StoreContext } from "../../../store/StoreContextProvider";
 
 const usePaymentsDS = selectedSchool => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
 
     // DataSource of the payments DataGrids - filtered by selected school and year

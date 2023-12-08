@@ -1,14 +1,14 @@
 import { useState, useContext } from "react";
 import SearchBar from "../searchbar/SearchBar";
 import pageText from './planmenu-text.json'
-import { SchoolsContext } from '../../store/SchoolsContextProvider'
+import { StoreContext } from '../../store/StoreContextProvider'
 import { SettingsContext } from "../settingscontext/settingscontext";
 
 
 
 const PlanMenu = ({ selectedPlanId, selectedPlanYear, selectedPlanStatus, setNewPlan }) => {
 
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
 
     const settings = useContext(SettingsContext);

@@ -1,8 +1,8 @@
 import { useState, useContext } from "react";
-import { SchoolsContext } from "../../../store/SchoolsContextProvider";
+import { StoreContext } from "../../../store/StoreContextProvider";
 
 const useSchoolSelection = () => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeLookupData = storeCtx.lookupData;
 
     // Filters the school for the whole page

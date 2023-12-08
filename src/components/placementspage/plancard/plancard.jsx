@@ -1,13 +1,13 @@
 import { Fragment } from "react";
 import { useState, useEffect, useContext } from "react";
-import { SchoolsContext } from "../../../store/SchoolsContextProvider";
+import { StoreContext } from "../../../store/StoreContextProvider";
 import { Container, Row, Col } from "react-bootstrap";
 import pageText from './plancard-text.json'
 import { linkToA } from '../../../utils/displayutils';
 
 const PlanCard = ({ planId }) => {
     
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
     const [plan, setPlan] = useState({});
     useEffect(() => {

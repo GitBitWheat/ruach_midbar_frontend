@@ -1,9 +1,9 @@
 import { useContext } from 'react';
-import { SchoolsContext } from '../../../store/SchoolsContextProvider';
+import { StoreContext } from '../../../store/StoreContextProvider';
 import pageText from '../contactspagetext.json';
 
 const SchoolCellComponent = ({ data }) => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeLookupData = storeCtx.lookupData;
 
     const school = storeLookupData.schools.get(data.value);

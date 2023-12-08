@@ -4,12 +4,12 @@ import { getDataRequest, addMsgPatternRequest, deleteMsgPatternRequest, addInstr
     addPlanButtonsRequest, deletePlanButtonsRequest, updatePlanPlacedCandidatesRequest, updateInstructorNotesRequest, addInstructorRequest,
     deleteInstructorRequest, updateInstructorRequest, updateSchoolRequest, addSchoolRequest, deleteSchoolRequest, updateContactRequest, addContactRequest,
     deleteContactRequest, addPaymentRequest, updatePaymentRequest, deletePaymentRequest, addInvitationRequest, updateInvitationRequest, deleteInvitationRequest,
-    addPlanRequest, updatePlanRequest, deletePlanRequest, updateSettingsRequest }
+    addPlanRequest, updatePlanRequest, deletePlanRequest }
     from '../utils/localServerRequests';
 
-const SchoolsContext = createContext();
+const StoreContext = createContext();
 
-const SchoolsContextProvider = ({ children }) => {
+const StoreContextProvider = ({ children }) => {
     const [schools, setSchools] = useState([]);
     const [levels, setLevels] = useState([]);
     const [sectors, setSectors] = useState([]);
@@ -33,7 +33,6 @@ const SchoolsContextProvider = ({ children }) => {
     const [planPlans, setPlanPlans] = useState([]);
     const [payments, setPayments] = useState([]);
     const [invitations, setInvitations] = useState([]);
-    const [settings, setSettings] = useState({});
 
     const [schoolsLU, setSchoolsLU] = useState(new Map());
     const [plansLU, setPlansLU] = useState(new Map());
@@ -63,7 +62,6 @@ const SchoolsContextProvider = ({ children }) => {
         planPlans: planPlans,
         payments: payments,
         invitations: invitations,
-        settings: settings
     };
 
     const lookupData = {
@@ -403,15 +401,6 @@ const SchoolsContextProvider = ({ children }) => {
         return success;
     }, [plans, plansLU]);
 
-    // Updating general settings in backend
-    const updateSettings = useCallback(async settingsData => {
-        const success = await updateSettingsRequest(settingsData);
-        if (success) {
-            setSettings(settingsData);
-        }
-        return success;
-    }, []);
-
     const methods = {
         addMessagePattern: addMessagePattern,
         deleteMessagePattern: deleteMessagePattern,
@@ -459,8 +448,6 @@ const SchoolsContextProvider = ({ children }) => {
         addPlan: addPlan,
         updatePlan: updatePlan,
         deletePlan: deletePlan,
-
-        updateSettings: updateSettings
     };
 
     const value = {
@@ -494,7 +481,6 @@ const SchoolsContextProvider = ({ children }) => {
             setPlanPlans(responseData.planPlans);
             setPayments(responseData.payments);
             setInvitations(responseData.invitations);
-            setSettings(responseData.settings);
 
             setSchoolsLU(new Map(responseData.schools.map(school => [school.id, school])));
             setPlansLU(new Map(responseData.plans.map(plan => [plan.id, plan])));
@@ -503,11 +489,11 @@ const SchoolsContextProvider = ({ children }) => {
     }, []);
 
     return (
-        <SchoolsContext.Provider value={value}>
+        <StoreContext.Provider value={value}>
             {children}
-        </SchoolsContext.Provider>
+        </StoreContext.Provider>
     );
 }
 
-export { SchoolsContext };
-export default SchoolsContextProvider;
+export { StoreContext };
+export default StoreContextProvider;

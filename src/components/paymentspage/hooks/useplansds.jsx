@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext } from "react";
-import { SchoolsContext } from "../../../store/SchoolsContextProvider";
+import { StoreContext } from "../../../store/StoreContextProvider";
 import { useSelectBoxOptions } from '../../../customhooks/useselectbox/useselectbox';
 
 const usePlansDS = (selectedSchool, dataYear) => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
 
     // DataSource of the plans DataGrid - show plans of selected school and of the selected year

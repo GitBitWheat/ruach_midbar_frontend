@@ -1,9 +1,9 @@
 import { useContext, useMemo } from "react";
-import { SchoolsContext } from '../../../../store/SchoolsContextProvider';
+import { StoreContext } from '../../../../store/StoreContextProvider';
 import pageText from '../../statustablespagetext.json';
 
 const useDS = () => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
 
     const ds = useMemo(() => storeData.schoolStatuses.map(status => {

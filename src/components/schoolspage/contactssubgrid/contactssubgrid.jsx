@@ -12,7 +12,7 @@ import { handleCurrentRowAction } from './misc/handlecurrentrowaction';
 
 import WhatsappCell from '../../customcells/whatsappcell/whatsappcell';
 
-import { SchoolsContext } from '../../../store/SchoolsContextProvider';
+import { StoreContext } from '../../../store/StoreContextProvider';
 import { SettingsContext } from '../../settingscontext/settingscontext';
 
 import settingsConstants from '../../../utils/settingsconstants.json';
@@ -21,7 +21,7 @@ import '../schoolspage.css';
 
 const ContactsSubgrid = ({ data }) => {
 
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeLookupData = storeCtx.lookupData;
 
     const settings = useContext(SettingsContext);

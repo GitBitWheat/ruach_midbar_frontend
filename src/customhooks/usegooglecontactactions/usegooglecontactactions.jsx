@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { SchoolsContext } from "../../store/SchoolsContextProvider";
+import { StoreContext } from "../../store/StoreContextProvider";
 import { deleteGoogleContactRequest, updateGoogleContactRequest, uploadToGoogleContacts }
     from '../../utils/localServerRequests';
 import { Button } from 'devextreme-react';
@@ -17,7 +17,7 @@ const deleteGoogleContactOnlyButtonRender = () => (
 
 const useGoogleContactActions = () => {
 
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeLookupData = storeCtx.lookupData;
     const storeMethods = storeCtx.methods;
 

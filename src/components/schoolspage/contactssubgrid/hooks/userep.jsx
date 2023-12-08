@@ -1,10 +1,10 @@
 import { useContext } from 'react';
-import { SchoolsContext } from '../../../../store/SchoolsContextProvider';
+import { StoreContext } from '../../../../store/StoreContextProvider';
 import { Button } from 'devextreme-react';
 import pageText from '../../schoolspagetext.json';
 
 const useRep = school => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeMethods = storeCtx.methods;
 
     const contactToRep = (firstName, role, phone) => {

@@ -30,7 +30,7 @@ import ComboEditCell from '../customcells/comboeditcell/comboeditcell';
 import SelectEditCell from '../customcells/selecteditcell/selecteditcell';
 import InstructorsCellRender from './misc/instructorscellrender.jsx';
 
-import { SchoolsContext } from '../../store/SchoolsContextProvider'
+import { StoreContext } from '../../store/StoreContextProvider.jsx'
 import { SettingsContext } from '../settingscontext/settingscontext';
 import settingsConstants from '../../utils/settingsconstants.json';
 
@@ -48,7 +48,7 @@ const proposalFilterDS = [{
 
 const PlansPage = () => {
 
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
     const storeLookupData = storeCtx.lookupData;
 

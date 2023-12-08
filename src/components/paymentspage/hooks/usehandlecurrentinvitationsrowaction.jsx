@@ -1,9 +1,9 @@
 import { useContext } from "react";
-import { SchoolsContext } from "../../../store/SchoolsContextProvider";
+import { StoreContext } from "../../../store/StoreContextProvider";
 import Invitation from "../../../store/storeModels/invitation";
 
 const useHandleCurrentInvitationsRowAction = selectedSchool => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeMethods = storeCtx.methods;
 
     // Request the server to update the data source, proceed if request succeeded

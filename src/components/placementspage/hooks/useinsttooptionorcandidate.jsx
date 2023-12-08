@@ -1,5 +1,5 @@
 import { useContext } from "react";
-import { SchoolsContext } from "../../../store/SchoolsContextProvider";
+import { StoreContext } from "../../../store/StoreContextProvider";
 import { dataGridRowLongClick } from "../../../utils/datagridrowlongclick";
 
 /**
@@ -8,7 +8,7 @@ import { dataGridRowLongClick } from "../../../utils/datagridrowlongclick";
  * adjustments to their color and the grids state.
  */
 const useInstToOptionOrCandidate = (selectedPlan, optionSwitchColorToDefault, deleteColor, resortGrids) => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeMethods = storeCtx.methods;
 
     const turnToCandidate = data => {

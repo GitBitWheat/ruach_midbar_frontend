@@ -1,9 +1,9 @@
 import { useContext } from 'react';
-import { SchoolsContext } from '../../../store/SchoolsContextProvider';
+import { StoreContext } from '../../../store/StoreContextProvider';
 import Plan from '../../../store/storeModels/plan';
 
 const useHandleCurrentRowActions = (linkDSLst=[]) => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeLookupData = storeCtx.lookupData;
     const storeMethods = storeCtx.methods;
 

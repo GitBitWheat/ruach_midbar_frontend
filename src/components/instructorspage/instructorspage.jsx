@@ -14,7 +14,7 @@ import useSearch from "../../customhooks/usesearch";
 import useClearFiltersButton from "../../customhooks/useclearfiltersbutton/useclearfiltersbutton";
 import usePlacedInstsByYear from "./hooks/useplacesinstsbyyear";
 
-import { SchoolsContext } from '../../store/SchoolsContextProvider'
+import { StoreContext } from '../../store/StoreContextProvider'
 import settingsConstants from '../../utils/settingsconstants.json';
 import { SettingsContext } from "../settingscontext/settingscontext";
 
@@ -27,7 +27,7 @@ const InstructorsPage = () => {
 
     const settings = useContext(SettingsContext);
 
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
 
     const dgRef = useRef(null);

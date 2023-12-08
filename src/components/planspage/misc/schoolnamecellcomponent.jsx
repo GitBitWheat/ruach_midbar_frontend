@@ -1,9 +1,9 @@
 import { useContext, Fragment } from 'react';
-import { SchoolsContext } from '../../../store/SchoolsContextProvider';
+import { StoreContext } from '../../../store/StoreContextProvider';
 import pageText from '../planspage-text.json';
 
 const SchoolNameCellComponent = ({ data }) => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeLookupData = storeCtx.lookupData;
 
     const school = storeLookupData.schools.get(data.value);

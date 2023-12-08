@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { SchoolsContext } from "../../../store/SchoolsContextProvider";
+import { StoreContext } from "../../../store/StoreContextProvider";
 
 const preparePlan = plan => (
     (({ instructor1, instructor2, instructor3, instructor4, ...rest }) => rest)({
@@ -10,7 +10,7 @@ const preparePlan = plan => (
 );
 
 const usePlanSelect = () => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeLookupData = storeCtx.lookupData;
 
     const [selectedPlan, setSelectedPlan] = useState(null);

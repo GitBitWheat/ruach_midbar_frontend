@@ -1,13 +1,13 @@
 import { useState, useEffect, useContext } from 'react';
 import Circle from '@uiw/react-color-circle';
-import { SchoolsContext } from '../../../../store/SchoolsContextProvider';
+import { StoreContext } from '../../../../store/StoreContextProvider';
 import './usecolors.css';
 
 const whiteHex = '#ffffff';
 
 const useColors = (selectedPlanId, candidatesDS) => {
 
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
     const storeLookupData = storeCtx.lookupData;
     const storeMethods = storeCtx.methods;

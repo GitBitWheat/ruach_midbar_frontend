@@ -832,26 +832,6 @@ export async function deletePlanRequest(planId) {
     }
 }
 
-
-
-export async function updateSettingsRequest(data) {
-    const serializedData = JSON.stringify(data);
-    const config = {
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        timeout: 60 * 1000 // 60 seconds
-    };
-
-    try {
-        await api.post('http://localhost:8000/updatesettings/', serializedData, config);
-        return true;
-    } catch (error) {
-        console.error(error);
-        return false;
-    }
-}
-
 export async function updatePeopleCreds() {
     const config = {
         headers: {

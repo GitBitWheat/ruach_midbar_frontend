@@ -5,6 +5,7 @@ import pageText from './whatsappcelltext.json';
 import './whatsappcell.css';
 
 const whatsappLink = 'whatsapp://send/?phone=';
+const focusOnContentReady = event => {event.component.focus();};
 
 /**
  * Lookup based custom edit cell
@@ -26,19 +27,18 @@ const WhatsappEditCell = ({ data }) => {
         data.setValue(`${name}#${whatsappLink}${event.value}#`);
     }, [data, name]);
 
-    const textRef = useRef(null);
     const phoneRef = useRef(null);
-    const [onTextTabKey, onPhoneTabKey] = useTab(textRef, phoneRef);
+    const onTextTabKey = useTab(phoneRef);
 
     return (
         <div className="whatsappEditCellRow">
             <TextBox
-                ref={textRef}
                 defaultValue={name}
                 placeholder={pageText.name}
                 onValueChanged={onNameChanged}
                 rtlEnabled={true}
                 onKeyDown={onTextTabKey}
+                onContentReady={focusOnContentReady}
             />
             <TextBox
                 ref={phoneRef}
@@ -46,7 +46,6 @@ const WhatsappEditCell = ({ data }) => {
                 placeholder={pageText.phone}
                 onValueChanged={onPhoneChanged}
                 rtlEnabled={false}
-                onKeyDown={onPhoneTabKey}
             />
         </div>
     );

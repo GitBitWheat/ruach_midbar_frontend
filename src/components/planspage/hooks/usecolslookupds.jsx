@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from "react";
-import { SchoolsContext } from '../../../store/SchoolsContextProvider';
+import { StoreContext } from '../../../store/StoreContextProvider';
 import { uniques } from '../../../utils/arrayUtils';
 
 /** Lookup datasources for the columns: status, invitation, district, plan, schoolName */
 const useColsLookupDS = yearFilteredPlansDS => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
 
     const [statusesLookupDS, setStatusesLookupDS] = useState([]);

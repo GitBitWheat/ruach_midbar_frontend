@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext } from "react";
-import { SchoolsContext } from "../../../store/SchoolsContextProvider";
+import { StoreContext } from "../../../store/StoreContextProvider";
 import { useSelectBoxOptions } from '../../../customhooks/useselectbox/useselectbox';
 
 const useSchoolsDS = dataYear => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
     const storeLookupData = storeCtx.lookupData;
 

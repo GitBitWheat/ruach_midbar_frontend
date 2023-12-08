@@ -1,23 +1,9 @@
-import { useMemo } from "react";
-
-import uuid from 'react-uuid';
-
-import DataTable from "../datatable/datatable";
-
+import { useState, useEffect } from "react";
+import { DataGrid } from "devextreme-react";
+import { Column } from "devextreme-react/data-grid";
 import pageText from './messagestatusestable-text.json'
 
-
-
-const msgStatusesTableColumns = [
-    {id: uuid(), field: "contactName", header: pageText.CONTACT_NAME},
-    {id: uuid(), field: "schoolName", header: pageText.SCHOOL_NAME},
-    {id: uuid(), field: "msg1", header: pageText.MSG1},
-    {id: uuid(), field: "msg2", header: pageText.MSG2},
-    {id: uuid(), field: "msg3", header: pageText.MSG3},
-    {id: uuid(), field: "generalFail", header: pageText.GENERAL_FAIL},
-];
-
-function codeToStr(codeNum) {
+const codeToStr = codeNum => {
     switch(codeNum) {
         case 1:
             return pageText.SUCCESSFUL;
@@ -32,11 +18,11 @@ function codeToStr(codeNum) {
         case 6:
             return pageText.COULD_NOT_LOAD_PAGE;
         default:
-            return codeNum;
+            return `${codeNum}`;
     }
-}
+};
 
-function processMessageStatuses (msgStatuses, selectedContacts) {
+const processMessageStatuses = (msgStatuses, selectedContacts) => {
     return msgStatuses.map((statuses, idx) =>
         [statuses, selectedContacts[idx]]
     ).filter(([statuses, _]) =>
@@ -61,19 +47,50 @@ function processMessageStatuses (msgStatuses, selectedContacts) {
         }
         return statusObj;
     });
-}
-
-
+};
 
 const MessageStatusesTable = ({msgStatuses, selectedContacts}) => {
-    const processedMsgStatuses = useMemo(() => processMessageStatuses(msgStatuses, selectedContacts), [msgStatuses, selectedContacts]);
+    const [processedMsgStatuses, setProcessedMsgStatuses] = useState([]);
+    useEffect(() => {
+        setProcessedMsgStatuses(processMessageStatuses(msgStatuses, selectedContacts));
+    }, [msgStatuses, selectedContacts]);
 
     return (
-        <DataTable
-            name="msgStatuses"
-            rows={processedMsgStatuses}
-            columns={msgStatusesTableColumns}
-        />
+        <DataGrid
+            dataSource={processedMsgStatuses}
+            keyExpr="id"
+        >
+            <Column
+                dataField='contactName'
+                dataType='string'
+                caption={pageText.CONTACT_NAME}
+            />
+            <Column
+                dataField='schoolName'
+                dataType='string'
+                caption={pageText.SCHOOL_NAME}
+            />
+            <Column
+                dataField='msg1'
+                dataType='string'
+                caption={pageText.MSG1}
+            />
+            <Column
+                dataField='msg2'
+                dataType='string'
+                caption={pageText.MSG2}
+            />
+            <Column
+                dataField='msg3'
+                dataType='string'
+                caption={pageText.MSG3}
+            />
+            <Column
+                dataField='generalFail'
+                dataType='string'
+                caption={pageText.GENERAL_FAIL}
+            />
+        </DataGrid>
     );
 };
 

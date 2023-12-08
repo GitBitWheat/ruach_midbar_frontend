@@ -1,11 +1,11 @@
 import { useContext } from 'react';
 import useSelectBox, { useSelectBoxOptions } from "../../../customhooks/useselectbox/useselectbox";
-import { SchoolsContext } from '../../../store/SchoolsContextProvider';
+import { StoreContext } from '../../../store/StoreContextProvider';
 import { SettingsContext } from "../../settingscontext/settingscontext";
 
 const usePlacedInstsByYear = () => {
 
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
 
     const settings = useContext(SettingsContext);

@@ -1,5 +1,5 @@
 import React, { useState, useContext } from "react";
-import { SchoolsContext } from '../../../store/SchoolsContextProvider';
+import { StoreContext } from '../../../store/StoreContextProvider';
 import { uploadProposalToDrive } from '../../../utils/localServerRequests';
 import { ColorRing } from "react-loader-spinner";
 import pageText from '../planspage-text.json';
@@ -9,7 +9,7 @@ import pageText from '../planspage-text.json';
  * @param {import("devextreme/ui/data_grid").ColumnEditCellTemplateData} props.data Data prop
  */
 const ProposalEditCellComponent = ({ data }) => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeLookupData = storeCtx.lookupData;
 
     const [isLoading, setIsLoading] = useState(false);

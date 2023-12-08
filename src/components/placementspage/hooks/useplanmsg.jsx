@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext } from "react";
 import { messagesRequest } from "../../../utils/localServerRequests";
-import { SchoolsContext } from "../../../store/SchoolsContextProvider";
+import { StoreContext } from "../../../store/StoreContextProvider";
 
 const usePlanMsg = (selectedPlan, candidatesDS) => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeMethods = storeCtx.methods;
     const storeLookupData = storeCtx.lookupData;
 

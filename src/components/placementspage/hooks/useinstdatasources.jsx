@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from "react";
-import { SchoolsContext } from "../../../store/SchoolsContextProvider";
+import { StoreContext } from "../../../store/StoreContextProvider";
 
 /**
  * Calculate the instructor data sources (the options and the placed candidates)
@@ -32,7 +32,7 @@ const calculateDataSources = (selectedPlan, instructors, instructorPlacements) =
 };
 
 const useInstDataSources = (selectedPlan) => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
 
     const [optionsDS, setOptionsDS] = useState([]);

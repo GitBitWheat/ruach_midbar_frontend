@@ -25,7 +25,7 @@ import InstructorsCellRender from '../planspage/misc/instructorscellrender';
 import { calculateWhatsappCellValue } from '../contactspage/misc/calculatewhatsappcellvalue';
 import { plansInstsCalculateDisplayValue } from './misc/plansinstscalculatedisplayvalue';
 
-import { SchoolsContext } from '../../store/SchoolsContextProvider';
+import { StoreContext } from '../../store/StoreContextProvider';
 import { SettingsContext } from '../settingscontext/settingscontext';
 
 import settingsConstants from '../../utils/settingsconstants.json';
@@ -34,7 +34,7 @@ import './paymentspage.css';
 
 const PaymentsPage = () => {
 
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
 
     const settings = useContext(SettingsContext);

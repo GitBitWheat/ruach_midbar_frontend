@@ -1,11 +1,11 @@
 import { useContext } from "react";
-import { SchoolsContext } from "../../store/SchoolsContextProvider";
+import { StoreContext } from "../../store/StoreContextProvider";
 import AllSectorsStatusTable from "./allsectorsstatustable/allsectorsstatustable";
 import SectorStatusTable from "./sectorstatustable/sectorstatustable";
 import './statustablespage.css';
 
 const StatusTablesPage = () => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
 
     const blankSector = storeData.sectors.find(sector => sector.desc === null);

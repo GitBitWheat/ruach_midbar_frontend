@@ -10,7 +10,7 @@ import useClearFiltersButton from '../../customhooks/useclearfiltersbutton/usecl
 import useHandleCurrentRowActions from './hooks/usehandlecurrentrowactions';
 import useSchoolsDS from './hooks/useschoolsds';
 
-import { SchoolsContext } from '../../store/SchoolsContextProvider';
+import { StoreContext } from '../../store/StoreContextProvider';
 import { SettingsContext } from '../settingscontext/settingscontext';
 
 import SchoolCellComponent from './misc/schoolcellcomponent';
@@ -22,7 +22,7 @@ import pageText from './contactspagetext.json';
 
 const ContactsPage = () => {
 
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
 
     const settings = useContext(SettingsContext);

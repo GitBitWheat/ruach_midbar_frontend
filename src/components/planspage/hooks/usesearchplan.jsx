@@ -1,10 +1,10 @@
 import { useContext, useCallback } from "react";
-import { SchoolsContext } from '../../../store/SchoolsContextProvider';
+import { StoreContext } from '../../../store/StoreContextProvider';
 import useSearch from '../../../customhooks/usesearch';
 import pageText from '../planspage-text.json';
 
 const useSearchPlan = (yearFilteredPlansDS, dgRef) => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeLookupData = storeCtx.lookupData;
 
     // When a plan is searched, that causes a rerender in the useSearch hook, which causes a rerender here.

@@ -1,11 +1,11 @@
 import { useContext } from 'react';
-import { SchoolsContext } from '../../../store/SchoolsContextProvider';
+import { StoreContext } from '../../../store/StoreContextProvider';
 import Contact from '../../../store/storeModels/contact';
 
 const useHandleCurrentRowActions =
     (addContactGoogleAndStore, deleteContactGoogleAndStore, updateContactGoogleAndStore) => {
 
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeLookupData = storeCtx.lookupData;
 
     const handleRowInserting = event => {

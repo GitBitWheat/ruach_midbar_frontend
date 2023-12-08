@@ -1,6 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 
-import { SchoolsContext } from '../../store/SchoolsContextProvider'
+import { StoreContext } from '../../store/StoreContextProvider'
 
 import uuid from 'react-uuid';
 
@@ -13,44 +13,21 @@ import Button from "react-bootstrap/esm/Button";
 import { InputGroup } from 'react-bootstrap';
 
 import MultiSelectSearchBar from '../multiselectsearchbar/MultiSelectSearchBar';
-import DataTable from '../datatable/datatable';
 import MessageStatusesTable from '../messagestatusestable/messagestatusestable';
 import SearchBar from '../searchbar/SearchBar';
 
 import './messagesform.css'
 
 import { selectSchools, selectContacts } from './selectors';
-import { pushSetter } from '../../utils/arrayUtils';
 import { messagesRequest } from '../../utils/localServerRequests';
-
-
-
-const schoolContactColumns = [
-    {field: "name", header: pageText.selectedSchoolsTblHeaderName},
-    {field: "level", header: pageText.selectedSchoolsTblHeaderLevel},
-    {field: "sector", header: pageText.selectedSchoolsTblHeaderSector},
-    {field: "schoolType", header: pageText.selectedSchoolsTblHeaderSchoolType},
-    {field: "city", header: pageText.selectedSchoolsTblHeaderCity},
-    {field: "schoolStatus", header: pageText.selectedSchoolsTblHeaderSchoolStatus},
-
-    {field: "firstName", header: pageText.selectedContactsTblHeaderFirstName},
-    {field: "lastName", header: pageText.selectedContactsTblHeaderLastName},
-    {field: "role", header: pageText.selectedContactsTblHeaderRole},
-    {field: "phone", header: pageText.selectedContactsTblHeaderPhone}
-];
-
-const contactPrioritiesTableColumns = [
-    {field: "isRep", header: pageText.contactIsRepLabel},
-    {field: "contactStatuses", header: pageText.contactStatusesLabel},
-    {field: "roles", header: pageText.contactRolesLabel},
-];
+import SchoolsContactsTable from './schoolscontactstable';
+import ContactPrioritiesGrid from './contactprioritiesgrid';
+import useContactPriorities from './usecontactpriorities';
 
 const searchBarLabelKey = option => option.desc !== null ? `${option.desc}` : pageText.emptyFilter;
 
-
-
 const MessagesForm = () => {
-    const schoolsCtx = useContext(SchoolsContext);
+    const schoolsCtx = useContext(StoreContext);
     const ctxData = schoolsCtx.data;
     const ctxMethods = schoolsCtx.methods;
 
@@ -75,8 +52,7 @@ const MessagesForm = () => {
     const [selectedRoles, setSelectedRoles] = useState([]);
     const [selectedContactStatuses, setSelectedContactStatuses] = useState([]);
 
-    const [contactPriorities, setContactPriorities] = useState([]);
-    const pushPriority = pushSetter(contactPriorities, setContactPriorities);
+    const [contactPriorities, pushPriority, onPrioritiesReorder, onPrioritiesRowRemoving] = useContactPriorities();
 
     const [newStatus, setNewStatus] = useState('');
     const [msgStatuses, setMsgStatuses] = useState([]);
@@ -89,8 +65,6 @@ const MessagesForm = () => {
         setMsg2(pattern.msg2);
         setMsg3(pattern.msg3);
     }, [pattern]);
-
-
 
     return (
         <>
@@ -287,107 +261,95 @@ const MessagesForm = () => {
             </Col>
 
             <Col className="square border border-dark">
-            <Form>
-                <Row className="mb-3">
-                    <Col>
-                        <h4>{pageText.chooseContacts}</h4>
-                    </Col>
-                </Row>
-                <Row className="mb-3">
-                    <Col>
-                        <b>{pageText.setPriority}</b>
-                    </Col>
-                </Row>
-                <Row className="mb-3">
-                    <Form.Group as={Col} controlId="formContactIsRep">
-                        <Form.Label>{pageText.contactIsRepLabel}</Form.Label>
-                        <Form.Check
-                            inline
-                            type="radio"
-                            label={pageText.yes}
-                            name="isRepRadios"
-                            id="isRepRadios1"
-                            onClick={() => {setIsRep('yes')}}
-                            defaultChecked
-                        />
-                        <Form.Check
-                            inline
-                            type="radio"
-                            label={pageText.no}
-                            name="isRepRadios"
-                            id="isRepRadios2"
-                            onClick={() => {setIsRep('no')}}
-                        />
-                        <Form.Check
-                            inline
-                            type="radio"
-                            label={pageText.both}
-                            name="isRepRadios"
-                            id="isRepRadios3"
-                            onClick={() => {setIsRep('both')}}
-                        />
-                    </Form.Group>
-                </Row>
-                <Row className="mb-3">
-                    <Form.Group as={Col} controlId="formContactRoles">
-                        <Form.Label>{pageText.contactRolesLabel}</Form.Label>
-                        <MultiSelectSearchBar
-                            selected = {selectedRoles}
-                            setSelected = {setSelectedRoles}
-                            options = {ctxData.roles}
-                            placeholder = ""
-                            labelKey={searchBarLabelKey}
-                        />
-                        <Form.Text className="text-muted">{pageText.noneChosenNote}</Form.Text>
-                    </Form.Group>
-                </Row>
-                <Row className="mb-3">
-                    <Form.Group as={Col} controlId="formContactStatus">
-                        <Form.Label>{pageText.contactStatusesLabel}</Form.Label>
-                        <MultiSelectSearchBar
-                            selected = {selectedContactStatuses}
-                            setSelected = {setSelectedContactStatuses}
-                            options = {ctxData.contactStatuses}
-                            placeholder = ""
-                            labelKey={searchBarLabelKey}
-                        />
-                        <Form.Text className="text-muted">{pageText.noneChosenNote}</Form.Text>
-                    </Form.Group>
-                </Row>
-                <Row className="mb-3">
-                    <Col>
-                        <Button variant="primary" onClick={() => {
-                                pushPriority({
-                                    id: uuid(),
-                                    isRep: isRep,
-                                    contactStatuses: selectedContactStatuses,
-                                    roles: selectedRoles
-                                });
-                            }}>
-                            {pageText.addPriority}
-                        </Button>
-                    </Col>
-                </Row>
-            </Form>
+                <Form>
+                    <Row className="mb-3">
+                        <Col>
+                            <h4>{pageText.chooseContacts}</h4>
+                        </Col>
+                    </Row>
+                    <Row className="mb-3">
+                        <Col>
+                            <b>{pageText.setPriority}</b>
+                        </Col>
+                    </Row>
+                    <Row className="mb-3">
+                        <Form.Group as={Col} controlId="formContactIsRep">
+                            <Form.Label>{pageText.contactIsRepLabel}</Form.Label>
+                            <Form.Check
+                                inline
+                                type="radio"
+                                label={pageText.yes}
+                                name="isRepRadios"
+                                id="isRepRadios1"
+                                onClick={() => {setIsRep('yes')}}
+                                defaultChecked
+                            />
+                            <Form.Check
+                                inline
+                                type="radio"
+                                label={pageText.no}
+                                name="isRepRadios"
+                                id="isRepRadios2"
+                                onClick={() => {setIsRep('no')}}
+                            />
+                            <Form.Check
+                                inline
+                                type="radio"
+                                label={pageText.both}
+                                name="isRepRadios"
+                                id="isRepRadios3"
+                                onClick={() => {setIsRep('both')}}
+                            />
+                        </Form.Group>
+                    </Row>
+                    <Row className="mb-3">
+                        <Form.Group as={Col} controlId="formContactRoles">
+                            <Form.Label>{pageText.contactRolesLabel}</Form.Label>
+                            <MultiSelectSearchBar
+                                selected = {selectedRoles}
+                                setSelected = {setSelectedRoles}
+                                options = {ctxData.roles}
+                                placeholder = ""
+                                labelKey={searchBarLabelKey}
+                            />
+                            <Form.Text className="text-muted">{pageText.noneChosenNote}</Form.Text>
+                        </Form.Group>
+                    </Row>
+                    <Row className="mb-3">
+                        <Form.Group as={Col} controlId="formContactStatus">
+                            <Form.Label>{pageText.contactStatusesLabel}</Form.Label>
+                            <MultiSelectSearchBar
+                                selected = {selectedContactStatuses}
+                                setSelected = {setSelectedContactStatuses}
+                                options = {ctxData.contactStatuses}
+                                placeholder = ""
+                                labelKey={searchBarLabelKey}
+                            />
+                            <Form.Text className="text-muted">{pageText.noneChosenNote}</Form.Text>
+                        </Form.Group>
+                    </Row>
+                    <Row className="mb-3">
+                        <Col>
+                            <Button variant="primary" onClick={() => {
+                                    pushPriority({
+                                        id: uuid(),
+                                        isRep: isRep,
+                                        contactStatuses: selectedContactStatuses,
+                                        roles: selectedRoles
+                                    });
+                                }}>
+                                {pageText.addPriority}
+                            </Button>
+                        </Col>
+                    </Row>
+                </Form>
 
                 <Row className="mb-3">
                     <Col>
-                        <DataTable
-                            name='contactPrioritiesDatatable'
-                            columns={contactPrioritiesTableColumns}
-                            rows={contactPriorities}
-                            colWidthWeights={{
-                                isRep: 1,
-                                contactStatuses: 2.5,
-                                roles: 2.5
-                            }}
-                            customColDisplay={{
-                                contactStatuses: row => row.contactStatuses.map(cs => cs.desc !== null && cs.desc !== '' ? cs.desc : pageText.emptyFilter).join(', '),
-                                roles: row => row.roles.map(role => role.desc !== null && role.desc !== '' ? role.desc : pageText.emptyFilter).join(', ')
-                            }}
-                            disableSort
-                            modifyRowsSort={true}
-                            setRows={setContactPriorities}
+                        <ContactPrioritiesGrid
+                            contactPriorities={contactPriorities}
+                            onReorder={onPrioritiesReorder}
+                            onRowRemoving={onPrioritiesRowRemoving}
                         />
                     </Col>
                 </Row>
@@ -459,7 +421,6 @@ const MessagesForm = () => {
                 </Row>
             </Col>
             </Row>
-
                 <Row>
                     <Col>
                         <p>
@@ -469,34 +430,9 @@ const MessagesForm = () => {
                 </Row>
                 <Row>
                     <Col>
-                        <DataTable
-                            name="schoolsContacts"
-                            columns={schoolContactColumns}
-                            rows={(() => {
-                                const schoolsContacts = [];
-                                for (const school of selectedSchools) {
-                                    const contact = selectedContacts.find(contact => school.id === contact.schoolId);
-                                    if (contact) {
-                                        schoolsContacts.push({
-                                            id: contact.id,
-                                            name: school.name,
-                                            level: school.level,
-                                            sector: school.sector,
-                                            schoolType: school.schoolType,
-                                            city: school.city,
-                                            schoolStatus: school.status,
-                                            firstName: contact.firstName,
-                                            lastName: contact.lastName,
-                                            role: contact.role,
-                                            phone: contact.phone
-                                        });
-                                    }
-                                }
-                                return schoolsContacts;
-                            })()}
-                            customColDisplay={{
-                                phone: row => (<a href={`whatsapp://send?phone=${row['phone']}`}>{row['phone']}</a>)
-                            }}
+                        <SchoolsContactsTable
+                            selectedSchools={selectedSchools}
+                            selectedContacts={selectedContacts}
                         />
                     </Col>
                 </Row>

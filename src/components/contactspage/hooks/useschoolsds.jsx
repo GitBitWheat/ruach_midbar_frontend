@@ -1,8 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
-import { SchoolsContext } from '../../../store/SchoolsContextProvider';
+import { StoreContext } from '../../../store/StoreContextProvider';
 
 const useSchoolsDS = () => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
 
     const [schoolsDS, setSchoolsDS] = useState([]);

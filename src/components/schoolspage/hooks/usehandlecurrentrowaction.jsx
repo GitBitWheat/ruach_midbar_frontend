@@ -1,9 +1,9 @@
 import { useContext } from 'react';
-import { SchoolsContext } from '../../../store/SchoolsContextProvider';
+import { StoreContext } from '../../../store/StoreContextProvider';
 import School from '../../../store/storeModels/school';
 
 const useHandleCurrentRowAction = (linkDsLst=[]) => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeMethods = storeCtx.methods;
 
     const handleRowInserting = event => {

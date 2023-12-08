@@ -4,6 +4,8 @@ import useTab from "./usetab";
 import pageText from './linkcelltext.json';
 import './linkcell.css';
 
+const focusOnContentReady = event => {event.component.focus();};
+
 /**
  * Lookup based custom edit cell
  * @param {Object} props Component props
@@ -26,19 +28,18 @@ const LinkEditCell = ({ data }) => {
         data.setValue(`${text}#${event.value}#`);
     }, [data, text]);
 
-    const textRef = useRef(null);
     const linkRef = useRef(null);
-    const [onTextTabKey, onLinkTabKey] = useTab(textRef, linkRef);
+    const onTextTabKey = useTab(linkRef);
 
     return (
         <div className="linkEditCellRow">
             <TextBox
-                ref={textRef}
                 defaultValue={text}
                 placeholder={pageText.name}
                 onValueChanged={onTextChanged}
                 rtlEnabled={true}
                 onKeyDown={onTextTabKey}
+                onContentReady={focusOnContentReady}
             />
             <TextBox
                 ref={linkRef}
@@ -46,7 +47,6 @@ const LinkEditCell = ({ data }) => {
                 placeholder={pageText.link}
                 onValueChanged={onUrlChanged}
                 rtlEnabled={false}
-                onKeyDown={onLinkTabKey}
             />
         </div>
     );

@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { SchoolsContext } from '../../../../store/SchoolsContextProvider';
+import { StoreContext } from '../../../../store/StoreContextProvider';
 import ArrayStore from 'devextreme/data/array_store';
 import DataSource from 'devextreme/data/data_source';
 
@@ -13,7 +13,7 @@ const getContacts = (contacts, schoolId) =>
     });
 
 const useContactsDS = schoolId => {
-    const storeCtx = useContext(SchoolsContext);
+    const storeCtx = useContext(StoreContext);
     const storeData = storeCtx.data;
 
     const [contactsDS, setContactsDS] = useState(null);
